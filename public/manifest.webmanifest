@@ -1,0 +1,19 @@
+{
+  "name": "なおったメモ",
+  "short_name": "なおったメモ",
+  "description": "症状のはじまりから「治った」まで記録する、個人用の体調メモ。",
+  "lang": "ja",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F2F0EA",
+  "theme_color": "#F2F0EA",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

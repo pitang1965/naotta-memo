@@ -1,0 +1,89 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-serif:
+    "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "Shippori Mincho",
+    "Noto Serif JP", serif;
+}
+
+/*
+  なおったメモの配色(和紙・カルテ帳)。shadcn の neutral トークンを
+  washi/緑基調に寄せている。緑(改善・治癒)を primary に。
+*/
+:root {
+  --radius: 0.625rem;
+  --background: oklch(0.955 0.006 95);      /* 和紙 #F2F0EA 相当 */
+  --foreground: oklch(0.25 0.01 130);        /* 墨 #2B2E28 相当 */
+  --card: oklch(0.985 0.005 95);             /* 札 #FCFBF7 相当 */
+  --card-foreground: oklch(0.25 0.01 130);
+  --popover: oklch(0.985 0.005 95);
+  --popover-foreground: oklch(0.25 0.01 130);
+  --primary: oklch(0.55 0.06 150);           /* 改善・治癒の緑 #4E8259 相当 */
+  --primary-foreground: oklch(0.985 0.005 95);
+  --secondary: oklch(0.92 0.008 95);
+  --secondary-foreground: oklch(0.3 0.01 130);
+  --muted: oklch(0.92 0.008 95);
+  --muted-foreground: oklch(0.5 0.01 120);   /* 補助テキスト #6B6F64 相当 */
+  --accent: oklch(0.92 0.01 95);
+  --accent-foreground: oklch(0.3 0.01 130);
+  --destructive: oklch(0.55 0.13 30);        /* 悪化の朱 #B5533F 相当 */
+  --border: oklch(0.86 0.012 90);            /* 罫線 #DAD4C4 相当 */
+  --input: oklch(0.86 0.012 90);
+  --ring: oklch(0.55 0.06 150);
+}
+
+.dark {
+  --background: oklch(0.2 0.008 110);
+  --foreground: oklch(0.92 0.01 95);
+  --card: oklch(0.24 0.008 110);
+  --card-foreground: oklch(0.92 0.01 95);
+  --popover: oklch(0.24 0.008 110);
+  --popover-foreground: oklch(0.92 0.01 95);
+  --primary: oklch(0.72 0.07 150);
+  --primary-foreground: oklch(0.18 0.01 110);
+  --secondary: oklch(0.3 0.008 110);
+  --secondary-foreground: oklch(0.92 0.01 95);
+  --muted: oklch(0.3 0.008 110);
+  --muted-foreground: oklch(0.72 0.01 100);
+  --accent: oklch(0.32 0.01 110);
+  --accent-foreground: oklch(0.92 0.01 95);
+  --destructive: oklch(0.68 0.13 32);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.72 0.07 150);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+}
