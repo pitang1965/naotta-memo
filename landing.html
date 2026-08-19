@@ -1,0 +1,526 @@
+<title>なおったメモ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    /* 和紙・カルテ帳(明るい昼のカルテ) */
+    --washi: #F2F0EA;
+    --paper: #FCFBF7;
+    --paper-2: #F7F5EE;
+    --rule: #DAD4C4;
+    --rule-soft: #E7E2D6;
+    --ink: #2B2E28;
+    --muted: #6B6F64;
+    --green: #4E8259;   /* 改善・治癒 */
+    --verm: #B5533F;    /* 悪化・朱印 */
+    --ochre: #B5893C;   /* 変わらず */
+    --green-ink: #3C6647;
+    --shadow: 0 1px 0 rgba(43,46,40,.04), 0 12px 30px -20px rgba(43,46,40,.35);
+    --seal: #B5533F;
+
+    --font-mincho: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "Shippori Mincho", "Noto Serif JP", serif;
+    --font-gothic: "Hiragino Kaku Gothic ProN", "Yu Gothic", "YuGothic", "Zen Kaku Gothic New", "Noto Sans JP", "Meiryo", sans-serif;
+    --font-mono: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", "Courier New", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --washi: #191A15;
+      --paper: #23241D;
+      --paper-2: #1F2019;
+      --rule: #3B3D33;
+      --rule-soft: #2E2F27;
+      --ink: #ECE9DF;
+      --muted: #A7A89B;
+      --green: #7FB187;
+      --verm: #D67C64;
+      --ochre: #CBA255;
+      --green-ink: #9BC6A0;
+      --shadow: 0 1px 0 rgba(0,0,0,.2), 0 16px 34px -22px rgba(0,0,0,.75);
+      --seal: #D67C64;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --washi: #191A15;
+    --paper: #23241D;
+    --paper-2: #1F2019;
+    --rule: #3B3D33;
+    --rule-soft: #2E2F27;
+    --ink: #ECE9DF;
+    --muted: #A7A89B;
+    --green: #7FB187;
+    --verm: #D67C64;
+    --ochre: #CBA255;
+    --green-ink: #9BC6A0;
+    --shadow: 0 1px 0 rgba(0,0,0,.2), 0 16px 34px -22px rgba(0,0,0,.75);
+    --seal: #D67C64;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background-color: var(--washi);
+    /* カルテの罫線を薄く敷く */
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 37px,
+      var(--rule-soft) 37px,
+      var(--rule-soft) 38px
+    );
+    color: var(--ink);
+    font-family: var(--font-gothic);
+    font-size: 17px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    line-break: strict;
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 22px;
+  }
+
+  /* ── ヘッダー ── */
+  header {
+    padding: 26px 0 10px;
+  }
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .brand .name {
+    font-family: var(--font-mincho);
+    font-size: 25px;
+    letter-spacing: .06em;
+    font-weight: 600;
+    margin: 0;
+  }
+  .brand .name .dot { color: var(--seal); }
+  .brand .kome {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+
+  /* ── ヒーロー ── */
+  .hero {
+    position: relative;
+    padding: 40px 0 20px;
+  }
+  .hero h1 {
+    font-family: var(--font-mincho);
+    font-weight: 600;
+    font-size: clamp(30px, 6.4vw, 50px);
+    line-height: 1.32;
+    letter-spacing: .01em;
+    text-wrap: balance;
+    margin: 0 0 18px;
+    max-width: 15em;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--green-ink);
+    box-shadow: inset 0 -.42em 0 rgba(78,130,89,.16);
+  }
+  .lede {
+    font-size: clamp(16px, 2.4vw, 19px);
+    color: var(--ink);
+    max-width: 30em;
+    margin: 0 0 30px;
+    line-break: strict;
+  }
+  .lede .l { display: block; }
+  .lede .l + .l { margin-top: 6px; }
+  .lede .l.soft { color: var(--muted); }
+
+  .cta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    padding: 12px 20px;
+    font-family: var(--font-gothic);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    cursor: default;
+  }
+  :root[data-theme="dark"] .btn,
+  :root:not([data-theme="light"]) .btn { color: #14150F; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .btn { color: #fff; }
+  }
+  .btn .url { font-family: var(--font-mono); font-size: 14px; font-weight: 500; }
+  .cta .note {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* ── 経過タイムライン(ヒーローの図) ── */
+  .track {
+    margin: 34px 0 6px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 26px 22px 20px;
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+  }
+  .track-cap {
+    font-size: 12.5px;
+    letter-spacing: .12em;
+    color: var(--muted);
+    text-transform: none;
+    margin: 0 0 18px;
+    font-family: var(--font-gothic);
+  }
+  .line {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 460px;
+    padding-top: 8px;
+  }
+  .line::before {
+    content: "";
+    position: absolute;
+    left: 6px; right: 6px; top: 13px;
+    height: 2px;
+    background: repeating-linear-gradient(to right, var(--rule) 0 7px, transparent 7px 12px);
+  }
+  .stop { position: relative; display: flex; flex-direction: column; align-items: center; gap: 9px; z-index: 1; flex: 0 0 auto; width: 84px; }
+  .node { width: 15px; height: 15px; border-radius: 50%; background: var(--washi); border: 2px solid var(--muted); }
+  .node.worse { background: var(--verm); border-color: var(--verm); }
+  .node.same  { background: var(--ochre); border-color: var(--ochre); }
+  .node.better{ background: var(--green); border-color: var(--green); }
+  .node.start { background: var(--ink); border-color: var(--ink); }
+  .stop .lab { font-size: 12.5px; color: var(--muted); text-align: center; line-height: 1.4; }
+  .stop .lab b { display:block; color: var(--ink); font-weight: 600; font-size: 13px; }
+
+  /* 治癒の朱印 */
+  .seal {
+    flex: 0 0 auto;
+    width: 86px;
+    display: flex; flex-direction: column; align-items: center; gap: 9px;
+    z-index: 1;
+  }
+  .stamp {
+    width: 46px; height: 46px; border-radius: 50%;
+    border: 2.5px solid var(--seal);
+    color: var(--seal);
+    display: grid; place-items: center;
+    font-family: var(--font-mincho);
+    font-size: 22px; font-weight: 700;
+    transform: rotate(-8deg);
+    box-shadow: inset 0 0 0 2px rgba(181,83,63,.16);
+    margin-top: -16px;
+  }
+  .seal .lab { font-size: 12.5px; color: var(--seal); font-weight: 600; }
+
+  /* ── セクション見出し ── */
+  .sec { padding: 30px 0 6px; }
+  .sec-h {
+    display: flex; align-items: center; gap: 12px;
+    margin: 0 0 22px;
+  }
+  .sec-h h2 {
+    font-family: var(--font-mincho);
+    font-size: clamp(21px, 3.6vw, 27px);
+    font-weight: 600;
+    letter-spacing: .03em;
+    margin: 0;
+  }
+  .sec-h .rule { flex: 1; height: 1px; background: var(--rule); }
+
+  /* ── 特長カード ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 620px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--green);
+    border-radius: 11px;
+    padding: 20px 20px 18px;
+    box-shadow: var(--shadow);
+  }
+  .card.verm { border-left-color: var(--verm); }
+  .card.ochre { border-left-color: var(--ochre); }
+  .card .ttl {
+    font-family: var(--font-mincho);
+    font-size: 18.5px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    margin: 0 0 8px;
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .card .ttl .idx {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .card p { margin: 0; font-size: 15px; color: var(--ink); line-height: 1.72; }
+  .card p .m { color: var(--muted); }
+
+  /* ── モックアップ(症状カード + 通院まとめ) ── */
+  .demo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  @media (max-width: 700px) { .demo { grid-template-columns: 1fr; } }
+
+  .device {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+  }
+  .device .mini-cap { font-size: 12px; color: var(--muted); letter-spacing: .1em; margin: 2px 2px 12px; }
+  .symptom {
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 11px;
+    padding: 15px 15px 14px;
+  }
+  .symptom .row1 { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+  .symptom .nm { font-family: var(--font-mincho); font-size: 19px; font-weight: 600; }
+  .symptom .days {
+    font-family: var(--font-mono);
+    font-size: 13px; color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .symptom .days b { color: var(--green-ink); font-size: 15px; }
+  .btns { display: flex; gap: 8px; }
+  .sbtn {
+    flex: 1; text-align: center;
+    border-radius: 8px; padding: 9px 4px;
+    font-size: 14px; font-weight: 600;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .sbtn.worse { color: var(--verm); border-color: color-mix(in srgb, var(--verm) 40%, var(--rule)); }
+  .sbtn.same  { color: var(--ochre); border-color: color-mix(in srgb, var(--ochre) 40%, var(--rule)); }
+  .sbtn.better{ color: #fff; background: var(--green); border-color: var(--green); }
+  :root[data-theme="dark"] .sbtn.better,
+  :root:not([data-theme="light"]) .sbtn.better { color: #14150F; }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .sbtn.better { color: #fff; } }
+  .heal-link {
+    margin: 12px 2px 2px;
+    font-size: 13.5px;
+    color: var(--seal);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .heal-link .s {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 1.5px solid var(--seal); color: var(--seal);
+    display: grid; place-items: center; font-family: var(--font-mincho); font-size: 11px; font-weight: 700;
+    transform: rotate(-8deg);
+  }
+
+  .export {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+  }
+  .export .mini-cap { font-size: 12px; color: var(--muted); letter-spacing: .1em; margin: 2px 2px 12px; }
+  .export pre {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: var(--ink);
+    background: var(--paper-2);
+    border: 1px dashed var(--rule);
+    border-radius: 10px;
+    padding: 14px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .export pre .g { color: var(--green-ink); }
+  .export pre .m { color: var(--muted); }
+
+  /* ── 原則ストリップ ── */
+  .tenets {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-top: 8px;
+  }
+  .tenet {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 8px 15px;
+    font-size: 13.5px;
+    color: var(--ink);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .tenet .k { color: var(--green-ink); font-weight: 700; }
+
+  /* ── フッター ── */
+  footer {
+    margin: 46px 0 40px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.9;
+  }
+  footer .prov {
+    display: inline-block;
+    font-family: var(--font-mincho);
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    border-radius: 7px;
+    padding: 2px 10px;
+    margin-bottom: 10px;
+    letter-spacing: .06em;
+  }
+  footer a { color: var(--green-ink); }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <h1 class="name">なおった<span class="dot">・</span>メモ</h1>
+      <span class="kome">通院のための、体調の記録</span>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>つらい日は、書ける。<br />むずかしいのは、<br /><em>治った日</em>を残すこと。</h1>
+
+    <p class="lede">
+      <span class="l">症状の<b>はじまり</b>から「<b>治った</b>」まで、ワンタップで記録。</span>
+      <span class="l soft">通院のときは、まとめてそのまま見せられる。</span>
+    </p>
+
+    <div class="cta">
+      <span class="note">準備中 ・ 個人用・端末内保存の PWA</span>
+    </div>
+
+    <div class="track" role="img" aria-label="症状の経過タイムライン。発症から悪化・改善を経て、治ったとして朱印で確定するまで。">
+      <p class="track-cap">ひとつの症状を、はじまりから治るまで —</p>
+      <div class="line">
+        <div class="stop"><span class="node start"></span><span class="lab"><b>発症</b>8/3</span></div>
+        <div class="stop"><span class="node worse"></span><span class="lab"><b>悪化</b>8/4</span></div>
+        <div class="stop"><span class="node same"></span><span class="lab"><b>変わらず</b>8/5</span></div>
+        <div class="stop"><span class="node better"></span><span class="lab"><b>改善</b>8/6</span></div>
+        <div class="seal">
+          <span class="stamp" aria-hidden="true">治</span>
+          <span class="lab">治った 8/7</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h"><h2>できること</h2><span class="rule"></span></div>
+    <div class="grid">
+      <div class="card">
+        <div class="ttl"><span class="idx">01</span>治った日を、残す</div>
+        <p>「改善」だけで終わらせない。<b>治った</b>を確定できる。あとから気づいても、<span class="m">実際に治った日をさかのぼって選べる。</span></p>
+      </div>
+      <div class="card verm">
+        <div class="ttl"><span class="idx">02</span>再発も、ひと続きで</div>
+        <p>ぶり返したら、治った症状の一覧から選ぶだけ。<span class="m">同じ症状として繋がり、「今月3回目・毎回2〜3日」まで見える。</span></p>
+      </div>
+      <div class="card">
+        <div class="ttl"><span class="idx">03</span>ワンタップの経過</div>
+        <p>悪化 / 変わらず / 改善。ひとことメモも添えられる。<span class="m">体温や気づきは、その日に何度でも書き足せる。</span></p>
+      </div>
+      <div class="card ochre">
+        <div class="ttl"><span class="idx">04</span>全体の調子も</div>
+        <p>その日の調子を ◎ ○ △ ✕ で。<span class="m">症状のない「良い日」も残るから、いつからいつまで不調だったかが分かる。</span></p>
+      </div>
+      <div class="card">
+        <div class="ttl"><span class="idx">05</span>通院用にまとめてコピー</div>
+        <p>症状ごとの要約と、直近の経過をプレーンテキストで。<span class="m">診察室で、そのまま見せられる・貼れる。</span></p>
+      </div>
+      <div class="card verm">
+        <div class="ttl"><span class="idx">06</span>記録は、端末の中だけ</div>
+        <p>健康の記録はサーバーに送らない。<span class="m">バックアップは自分でファイルに書き出して持ち運ぶ。</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h"><h2>使う画面</h2><span class="rule"></span></div>
+    <div class="demo">
+      <div class="device">
+        <div class="mini-cap">続いている症状</div>
+        <div class="symptom">
+          <div class="row1">
+            <span class="nm">頭痛</span>
+            <span class="days">このぶり返し <b>4</b> 日目</span>
+          </div>
+          <div class="btns">
+            <span class="sbtn worse">悪化</span>
+            <span class="sbtn same">変わらず</span>
+            <span class="sbtn better">改善</span>
+          </div>
+          <span class="heal-link"><span class="s" aria-hidden="true">治</span>治った記録にする</span>
+        </div>
+      </div>
+
+      <div class="export">
+        <div class="mini-cap">通院用にまとめてコピー</div>
+        <pre>■ 続いている症状
+<span class="g">頭痛</span> ・ 2024年3月から断続的
+  現在: 8/14 再発〜4日目
+  過去3回、毎回2〜3日で治癒
+  <span class="m">8/14 発症 / 8/15 悪化 /</span>
+  <span class="m">8/16 変わらず / 8/17 改善</span>
+
+■ 最近治った症状
+<span class="g">右ひざの痛み</span> 8/1〜8/9(9日間)</pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h"><h2>考え方</h2><span class="rule"></span></div>
+    <div class="tenets">
+      <span class="tenet"><span class="k">◦</span> 超軽量・ワンタップ</span>
+      <span class="tenet"><span class="k">◦</span> 悪化より、治った日を大事に</span>
+      <span class="tenet"><span class="k">◦</span> データは端末内(サーバーなし)</span>
+      <span class="tenet"><span class="k">◦</span> インストールできるPWA</span>
+      <span class="tenet"><span class="k">◦</span> 通院で、そのまま使える</span>
+    </div>
+  </section>
+
+  <footer>
+    <span class="prov">暫定ページ</span><br />
+    「なおったメモ」の暫定ランディングページです。仕様は検討中のため、内容・画面は変わります。<br />
+    個人用 ・ 健康情報は端末内(localStorage)に保存
+  </footer>
+
+</div>

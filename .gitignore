@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment files
+.env
+.env.local
+.env.staging
+.env.production
+.dev.vars
+.dev.vars.*
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Testing
+coverage/
+
+# PWA dev build
+dev-dist/
+
+# Temp files
+tmp/
+
+# TanStack generated
+.tanstack/
+
+# Cloudflare Wrangler local state
+.wrangler/
