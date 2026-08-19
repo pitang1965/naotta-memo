@@ -7,6 +7,7 @@ import {
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 import "../index.css";
+import { BottomNav } from "../components/BottomNav";
 
 function RootDocument({ children }: { children: ReactNode }) {
   // Service Worker 登録(PWA)。クライアントでのみ動く。
@@ -31,12 +32,16 @@ function RootDocument({ children }: { children: ReactNode }) {
           }}
         />
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+        />
         <link rel="manifest" href="/manifest.webmanifest" />
         <HeadContent />
       </head>
       <body>
         {children}
+        <BottomNav />
         <Scripts />
       </body>
     </html>
