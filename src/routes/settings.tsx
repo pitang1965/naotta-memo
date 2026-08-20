@@ -5,6 +5,7 @@ import { addIssue, updateSettings } from "@/domain/operations";
 import { BackupSection } from "@/components/BackupSection";
 import { ProfileSection } from "@/components/ProfileSection";
 import { CsvImport } from "@/components/CsvImport";
+import { OtherApps } from "@/components/OtherApps";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -45,6 +46,7 @@ function SettingsPage() {
         <h1 className="font-serif text-lg font-semibold tracking-wide">設定</h1>
       </header>
       {body}
+      <OtherApps />
       <footer className="text-muted-foreground border-border mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 border-t pt-4 text-xs">
         <Link to="/terms" className="hover:text-foreground hover:underline">
           利用規約
