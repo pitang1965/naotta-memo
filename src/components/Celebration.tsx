@@ -124,7 +124,7 @@ export function Celebration() {
     <canvas
       ref={canvasRef}
       aria-hidden
-      className="pointer-events-none fixed inset-0 z-[100]"
+      className="pointer-events-none fixed inset-0 z-100"
     />
   );
 }
