@@ -3,7 +3,12 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAppData } from "@/hooks/useAppData";
 import { latestCheckinAt } from "@/domain/episodes";
-import { deleteCheckin, editCheckin, replaceIssue } from "@/domain/operations";
+import {
+  deleteCheckin,
+  deleteCheckinsOnDate,
+  editCheckin,
+  replaceIssue,
+} from "@/domain/operations";
 import { Input } from "@/components/ui/input";
 import { IssueHistory } from "@/components/IssueHistory";
 
@@ -71,6 +76,11 @@ function History() {
               }
               onDeleteCheckin={(cid) =>
                 update((d) => replaceIssue(d, deleteCheckin(issue, cid)))
+              }
+              onDeleteDay={(dateKey) =>
+                update((d) =>
+                  replaceIssue(d, deleteCheckinsOnDate(issue, dateKey)),
+                )
               }
             />
           ))}

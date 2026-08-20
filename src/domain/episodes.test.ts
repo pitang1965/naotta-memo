@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { createIssue, addCheckin, resolveIssue, relapseIssue } from "./operations";
+import {
+  createIssue,
+  addCheckin,
+  resolveIssue,
+  relapseIssue,
+  deleteCheckinsOnDate,
+} from "./operations";
 import {
   deriveEpisodes,
   deriveStatus,
@@ -114,6 +120,23 @@ describe("操作は不変(元を壊さない)", () => {
     expect(issue.checkins).toHaveLength(before);
     expect(next.checkins).toHaveLength(before + 1);
     expect(next).not.toBe(issue);
+  });
+});
+
+describe("ある日の記録をまとめて削除", () => {
+  it("指定日のエントリだけ消え、他の日は残る", () => {
+    let issue = createIssue("頭痛", at("2026-08-10"));
+    issue = addCheckin(issue, "worse", { at: at("2026-08-11", "09:00:00") });
+    issue = addCheckin(issue, "memo", {
+      at: at("2026-08-11", "20:00:00"),
+      note: "病院",
+    });
+    issue = addCheckin(issue, "better", { at: at("2026-08-12") });
+    expect(issue.checkins).toHaveLength(4);
+
+    const after = deleteCheckinsOnDate(issue, "2026-08-11");
+    expect(after.checkins).toHaveLength(2);
+    expect(after.checkins.map((c) => c.status)).toEqual(["start", "better"]);
   });
 });
 

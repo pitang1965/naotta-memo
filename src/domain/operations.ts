@@ -9,6 +9,7 @@ import {
   type Mood,
   type Status,
 } from "./types";
+import { localDateKey } from "./time";
 
 function newId(): string {
   // ブラウザ・Node22 双方で利用可能。
@@ -83,6 +84,14 @@ export function deleteCheckin(issue: Issue, checkinId: string): Issue {
   return {
     ...issue,
     checkins: issue.checkins.filter((c) => c.id !== checkinId),
+  };
+}
+
+/** ある日(ローカル日付)の記録をまとめて削除する */
+export function deleteCheckinsOnDate(issue: Issue, dateKey: string): Issue {
+  return {
+    ...issue,
+    checkins: issue.checkins.filter((c) => localDateKey(c.at) !== dateKey),
   };
 }
 

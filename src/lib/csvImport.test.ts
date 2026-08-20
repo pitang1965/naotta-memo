@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { parseCsv, rowsToIssues } from "@/lib/csvImport";
+import {
+  parseCsv,
+  revalidateRow,
+  rowsToIssues,
+  TEMPLATE_CSV,
+} from "@/lib/csvImport";
 
 const CSV = [
   "症状名,日付,時刻,状態,メモ",
@@ -74,6 +79,47 @@ describe("rowsToIssues", () => {
     expect(issues[0].checkins.map((c) => c.status)).toEqual([
       "start",
       "resolved",
+    ]);
+  });
+});
+
+describe("revalidateRow(プレビュー編集)", () => {
+  it("日付を直すと valid になり at が付く", () => {
+    const { rows } = parseCsv(CSV);
+    const bad = rows[4]; // 腰痛 2026-13-01(不正)
+    expect(bad.valid).toBe(false);
+    const fixed = revalidateRow({ ...bad, dateKey: "2026-05-01" });
+    expect(fixed.valid).toBe(true);
+    expect(fixed.at).not.toBe("");
+    expect(fixed.include).toBe(true);
+  });
+
+  it("症状名を空にすると invalid になる", () => {
+    const { rows } = parseCsv(CSV);
+    const r = revalidateRow({ ...rows[0], name: "   " });
+    expect(r.valid).toBe(false);
+    expect(r.error).toContain("症状名");
+  });
+});
+
+describe("見本CSV(TEMPLATE_CSV)", () => {
+  const { headerError, rows } = parseCsv(TEMPLATE_CSV);
+
+  it("全行が有効に解析される", () => {
+    expect(headerError).toBeUndefined();
+    expect(rows.length).toBeGreaterThan(20);
+    expect(rows.every((r) => r.valid)).toBe(true);
+  });
+
+  it("6つの症状に束ねられる", () => {
+    const issues = rowsToIssues(rows);
+    expect(issues.map((i) => i.name)).toEqual([
+      "頭痛",
+      "腰痛",
+      "蕁麻疹",
+      "胃痛",
+      "花粉症",
+      "不眠",
     ]);
   });
 });

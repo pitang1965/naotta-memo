@@ -9,17 +9,32 @@ import { localDateKey } from "@/domain/time";
 import { jpDate, jpDateFull } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import { CheckinRow } from "@/components/CheckinRow";
+import { DeleteDayButton } from "@/components/DeleteDayButton";
+
+/** 時刻順のエントリを、同じ日ごとにまとめる(連続する同一日をグループ化) */
+function groupByDay(checkins: Checkin[]): [string, Checkin[]][] {
+  const groups: [string, Checkin[]][] = [];
+  for (const c of checkins) {
+    const key = localDateKey(c.at);
+    const last = groups[groups.length - 1];
+    if (last && last[0] === key) last[1].push(c);
+    else groups.push([key, [c]]);
+  }
+  return groups;
+}
 
 export function IssueHistory({
   issue,
   now,
   onEditCheckin,
   onDeleteCheckin,
+  onDeleteDay,
 }: {
   issue: Issue;
   now: Date;
   onEditCheckin: (checkinId: string, patch: Partial<Omit<Checkin, "id">>) => void;
   onDeleteCheckin: (checkinId: string) => void;
+  onDeleteDay: (dateKey: string) => void;
 }) {
   const active = deriveStatus(issue) === "active";
   const episodes = deriveEpisodes(issue);
@@ -72,17 +87,32 @@ export function IssueHistory({
                     ? ` 〜 継続中(${dayNow}日目)`
                     : ""}
               </p>
-              <ul className="border-border ml-1 flex flex-col gap-1.5 border-l pl-3">
-                {ep.checkins.map((c) => (
-                  <CheckinRow
-                    key={c.id}
-                    checkin={c}
-                    withDate
-                    onEdit={(patch) => onEditCheckin(c.id, patch)}
-                    onDelete={() => onDeleteCheckin(c.id)}
-                  />
+              <div className="flex flex-col gap-2">
+                {groupByDay(ep.checkins).map(([dateKey, dayCheckins]) => (
+                  <div key={dateKey}>
+                    <div className="mb-1 flex items-center justify-between gap-2">
+                      <span className="text-muted-foreground text-xs font-medium tabular-nums">
+                        {jpDate(dateKey)}
+                      </span>
+                      <DeleteDayButton
+                        dateLabel={jpDate(dateKey)}
+                        count={dayCheckins.length}
+                        onDelete={() => onDeleteDay(dateKey)}
+                      />
+                    </div>
+                    <ul className="border-border ml-1 flex flex-col gap-1.5 border-l pl-3">
+                      {dayCheckins.map((c) => (
+                        <CheckinRow
+                          key={c.id}
+                          checkin={c}
+                          onEdit={(patch) => onEditCheckin(c.id, patch)}
+                          onDelete={() => onDeleteCheckin(c.id)}
+                        />
+                      ))}
+                    </ul>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           );
         })}

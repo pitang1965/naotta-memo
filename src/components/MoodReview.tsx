@@ -14,7 +14,11 @@ const MOOD_COLOR: Record<Mood, string> = {
   bad: "bg-destructive",
 };
 
-const STRIP_DAYS = 14;
+const RANGE_OPTIONS: { label: string; days: number }[] = [
+  { label: "2週間", days: 14 },
+  { label: "1ヶ月", days: 30 },
+  { label: "3ヶ月", days: 90 },
+];
 
 export function MoodReview({
   data,
@@ -28,26 +32,53 @@ export function MoodReview({
   onClear: (date: string) => void;
 }) {
   const [editing, setEditing] = useState<string | null>(null);
-  const days = recentDayKeys(STRIP_DAYS, now);
+  const [rangeDays, setRangeDays] = useState(14);
+  const days = recentDayKeys(rangeDays, now);
+  const gap = rangeDays <= 14 ? "gap-1" : rangeDays <= 30 ? "gap-0.5" : "gap-px";
   const byDate = new Map(data.daily.map((d) => [d.date, d.mood]));
   const recorded = [...data.daily].sort((a, b) => (a.date < b.date ? 1 : -1));
+  const editingMood = editing !== null ? byDate.get(editing) : undefined;
 
   return (
     <div className="flex flex-col gap-6">
       <section>
-        <h2 className="text-muted-foreground mb-2 text-sm font-medium">
-          この2週間
-        </h2>
-        <div className="flex gap-1">
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <h2 className="text-muted-foreground text-sm font-medium">
+            調子の推移
+          </h2>
+          <div className="flex gap-1">
+            {RANGE_OPTIONS.map((o) => (
+              <button
+                key={o.days}
+                onClick={() => setRangeDays(o.days)}
+                aria-pressed={rangeDays === o.days}
+                className={cn(
+                  "rounded-md border px-2 py-0.5 text-xs transition-colors",
+                  rangeDays === o.days
+                    ? "border-primary bg-primary/10 text-primary font-medium"
+                    : "border-border text-muted-foreground hover:bg-accent/50",
+                )}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className={cn("flex", gap)}>
           {days.map((key) => {
             const m = byDate.get(key);
             return (
-              <div
+              <button
                 key={key}
+                onClick={() => setEditing(key)}
                 title={`${jpDate(key)} ${m ? MOOD_LABEL[m] : "未記録"}`}
+                aria-label={`${jpDate(key)} の調子を記録`}
                 className={cn(
                   "h-9 flex-1 rounded-sm",
-                  m ? MOOD_COLOR[m] : "bg-muted",
+                  m ? MOOD_COLOR[m] : "bg-muted hover:bg-muted-foreground/30",
+                  editing === key &&
+                    "ring-primary ring-offset-background ring-2 ring-offset-2",
                 )}
               />
             );
@@ -57,6 +88,58 @@ export function MoodReview({
           <span>{jpDate(days[0])}</span>
           <span>今日</span>
         </div>
+
+        {editing !== null && (
+          <div className="border-border bg-card mt-3 flex flex-col gap-2 rounded-lg border p-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium tabular-nums">
+                {jpDate(editing)} の調子
+              </span>
+              <button
+                onClick={() => setEditing(null)}
+                aria-label="閉じる"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {MOOD_OPTIONS.map((o) => (
+                <button
+                  key={o.value}
+                  onClick={() => {
+                    onSet(editing, o.value);
+                    setEditing(null);
+                  }}
+                  className={cn(
+                    "flex flex-col items-center gap-1 rounded-lg border py-2 transition-colors",
+                    editingMood === o.value
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border text-foreground hover:bg-accent",
+                  )}
+                >
+                  <span className="text-lg leading-none">{o.symbol}</span>
+                  <span className="text-xs">{o.text}</span>
+                </button>
+              ))}
+            </div>
+            {editingMood && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="self-start"
+                onClick={() => {
+                  onClear(editing);
+                  setEditing(null);
+                }}
+              >
+                <Trash2 />
+                この日を削除
+              </Button>
+            )}
+          </div>
+        )}
+
         <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">
           {MOOD_OPTIONS.map((o) => (
             <span
@@ -68,6 +151,9 @@ export function MoodReview({
             </span>
           ))}
         </div>
+        <p className="text-muted-foreground mt-2 text-xs">
+          マスをタップすると、その日の調子を記録・修正できます(過去の日も)。
+        </p>
       </section>
 
       <section>
@@ -78,57 +164,11 @@ export function MoodReview({
           </p>
         ) : (
           <ul className="divide-border flex flex-col divide-y">
-            {recorded.map((d) =>
-              editing === d.date ? (
-                <li key={d.date} className="flex flex-col gap-2 py-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm tabular-nums">{jpDate(d.date)}</span>
-                    <button
-                      onClick={() => setEditing(null)}
-                      aria-label="取消"
-                      className="text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="size-4" />
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-4 gap-2">
-                    {MOOD_OPTIONS.map((o) => (
-                      <button
-                        key={o.value}
-                        onClick={() => {
-                          onSet(d.date, o.value);
-                          setEditing(null);
-                        }}
-                        className={cn(
-                          "flex flex-col items-center gap-1 rounded-lg border py-2 transition-colors",
-                          d.mood === o.value
-                            ? "border-primary bg-primary/10 text-primary"
-                            : "border-border text-foreground hover:bg-accent",
-                        )}
-                      >
-                        <span className="text-lg leading-none">{o.symbol}</span>
-                        <span className="text-xs">{o.text}</span>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex justify-start">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        onClear(d.date);
-                        setEditing(null);
-                      }}
-                    >
-                      <Trash2 />
-                      この日を削除
-                    </Button>
-                  </div>
-                </li>
-              ) : (
-                <li
-                  key={d.date}
-                  className="flex items-center justify-between py-2.5 text-sm"
+            {recorded.map((d) => (
+              <li key={d.date}>
+                <button
+                  onClick={() => setEditing(d.date)}
+                  className="hover:bg-accent/40 flex w-full items-center justify-between rounded-md px-1 py-2.5 text-sm transition-colors"
                 >
                   <span className="tabular-nums">{jpDate(d.date)}</span>
                   <span className="inline-flex items-center gap-2">
@@ -138,17 +178,11 @@ export function MoodReview({
                     <span className="font-medium">
                       {MOOD_SYMBOL[d.mood]} {MOOD_LABEL[d.mood]}
                     </span>
-                    <button
-                      onClick={() => setEditing(d.date)}
-                      aria-label="この日の調子を編集"
-                      className="text-muted-foreground hover:text-foreground ml-1"
-                    >
-                      <Pencil className="size-3.5" />
-                    </button>
+                    <Pencil className="text-muted-foreground size-3.5" />
                   </span>
-                </li>
-              ),
-            )}
+                </button>
+              </li>
+            ))}
           </ul>
         )}
       </section>
