@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { Check, Pencil, X } from "lucide-react";
 import type { Checkin, Issue } from "@/domain/types";
 import {
   currentEpisodeDays,
@@ -8,8 +10,11 @@ import {
 import { localDateKey } from "@/domain/time";
 import { jpDate, jpDateFull } from "@/lib/labels";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { CheckinRow } from "@/components/CheckinRow";
 import { DeleteDayButton } from "@/components/DeleteDayButton";
+import { DeleteIssueButton } from "@/components/DeleteIssueButton";
 
 /** 時刻順のエントリを、同じ日ごとにまとめる(連続する同一日をグループ化) */
 function groupByDay(checkins: Checkin[]): [string, Checkin[]][] {
@@ -29,16 +34,28 @@ export function IssueHistory({
   onEditCheckin,
   onDeleteCheckin,
   onDeleteDay,
+  onRename,
+  onDeleteIssue,
 }: {
   issue: Issue;
   now: Date;
   onEditCheckin: (checkinId: string, patch: Partial<Omit<Checkin, "id">>) => void;
   onDeleteCheckin: (checkinId: string) => void;
   onDeleteDay: (dateKey: string) => void;
+  onRename: (name: string) => void;
+  onDeleteIssue: () => void;
 }) {
   const active = deriveStatus(issue) === "active";
   const episodes = deriveEpisodes(issue);
   const span = diseaseSpan(issue, now);
+  const [renaming, setRenaming] = useState(false);
+  const [draftName, setDraftName] = useState(issue.name);
+
+  const saveName = () => {
+    const n = draftName.trim();
+    if (n) onRename(n);
+    setRenaming(false);
+  };
 
   return (
     <details className="bg-card border-border group rounded-xl border">
@@ -116,6 +133,50 @@ export function IssueHistory({
             </div>
           );
         })}
+
+        <div className="border-border mt-1 flex items-center justify-between gap-2 border-t pt-3">
+          {renaming ? (
+            <div className="flex flex-1 items-center gap-2">
+              <Input
+                autoFocus
+                value={draftName}
+                onChange={(e) => setDraftName(e.target.value)}
+                placeholder="症状名"
+                className="h-8"
+              />
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setRenaming(false)}
+              >
+                <X />
+                取消
+              </Button>
+              <Button size="sm" onClick={saveName} disabled={!draftName.trim()}>
+                <Check />
+                保存
+              </Button>
+            </div>
+          ) : (
+            <>
+              <button
+                onClick={() => {
+                  setDraftName(issue.name);
+                  setRenaming(true);
+                }}
+                className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-xs"
+              >
+                <Pencil className="size-3.5" />
+                名前を変更
+              </button>
+              <DeleteIssueButton
+                name={issue.name}
+                onDelete={onDeleteIssue}
+                label="この症状を削除"
+              />
+            </>
+          )}
+        </div>
       </div>
     </details>
   );

@@ -5,6 +5,7 @@ import { MAGNITUDE_STATUSES } from "@/domain/types";
 import { currentEpisodeDays, sortedCheckins } from "@/domain/episodes";
 import { localDateKey, todayKey } from "@/domain/time";
 import { STATUS_LABEL } from "@/lib/labels";
+import { celebrate } from "@/lib/celebrate";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -134,7 +135,10 @@ export function SymptomCard({
             description="いつ治りましたか?(過去の日も選べます)"
             confirmLabel="治ったことにする"
             now={now}
-            onConfirm={onResolve}
+            onConfirm={(at) => {
+              onResolve(at);
+              celebrate();
+            }}
             trigger={
               <button className="text-primary inline-flex items-center gap-1.5 text-sm font-medium underline-offset-2 hover:underline">
                 <span
@@ -144,7 +148,7 @@ export function SymptomCard({
                 >
                   治
                 </span>
-                治った記録にする
+                治った！
               </button>
             }
           />

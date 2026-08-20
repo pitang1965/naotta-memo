@@ -17,21 +17,26 @@ export function DeleteIssueButton({
   name,
   onDelete,
   className,
+  label,
 }: {
   name: string;
   onDelete: () => void;
   className?: string;
+  /** アイコンの横に出す文言(省略時はアイコンのみ) */
+  label?: string;
 }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger
         aria-label={`「${name}」を削除`}
         className={cn(
-          "text-muted-foreground hover:text-destructive shrink-0 transition-colors",
+          "text-muted-foreground hover:text-destructive inline-flex shrink-0 items-center gap-1 transition-colors",
+          label && "text-xs",
           className,
         )}
       >
-        <Trash2 className="size-4" />
+        <Trash2 className={label ? "size-3.5" : "size-4"} />
+        {label}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

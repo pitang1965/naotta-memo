@@ -7,6 +7,8 @@ import {
   deleteCheckin,
   deleteCheckinsOnDate,
   editCheckin,
+  removeIssue,
+  renameIssue,
   replaceIssue,
 } from "@/domain/operations";
 import { Input } from "@/components/ui/input";
@@ -82,6 +84,10 @@ function History() {
                   replaceIssue(d, deleteCheckinsOnDate(issue, dateKey)),
                 )
               }
+              onRename={(name) =>
+                update((d) => replaceIssue(d, renameIssue(issue, name)))
+              }
+              onDeleteIssue={() => update((d) => removeIssue(d, issue.id))}
             />
           ))}
         </div>

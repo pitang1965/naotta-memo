@@ -8,6 +8,7 @@ import type { ReactNode } from "react";
 import { useEffect } from "react";
 import "../index.css";
 import { BottomNav } from "../components/BottomNav";
+import { Celebration } from "../components/Celebration";
 
 function RootDocument({ children }: { children: ReactNode }) {
   // Service Worker 登録(PWA)。クライアントでのみ動く。
@@ -42,6 +43,7 @@ function RootDocument({ children }: { children: ReactNode }) {
       <body>
         {children}
         <BottomNav />
+        <Celebration />
         <Scripts />
       </body>
     </html>
