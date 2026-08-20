@@ -1,21 +1,27 @@
 import { useState, type FormEvent } from "react";
 import { Plus, X } from "lucide-react";
+import { atForDateKey, todayKey } from "@/domain/time";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { DateChoice } from "@/components/DateChoice";
 
 export function AddSymptom({
+  now,
   onAdd,
 }: {
-  onAdd: (name: string, note: string) => void;
+  now: Date;
+  onAdd: (name: string, note: string, atISO: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [note, setNote] = useState("");
+  const [onsetKey, setOnsetKey] = useState(() => todayKey(now));
 
   const reset = () => {
     setName("");
     setNote("");
+    setOnsetKey(todayKey(now));
     setOpen(false);
   };
 
@@ -23,7 +29,7 @@ export function AddSymptom({
     e.preventDefault();
     const trimmed = name.trim();
     if (!trimmed) return;
-    onAdd(trimmed, note.trim());
+    onAdd(trimmed, note.trim(), atForDateKey(onsetKey, now));
     reset();
   };
 
@@ -59,6 +65,10 @@ export function AddSymptom({
         rows={2}
         className="min-h-16"
       />
+      <div className="flex flex-col gap-1.5">
+        <span className="text-muted-foreground text-xs">発症日</span>
+        <DateChoice value={onsetKey} onChange={setOnsetKey} now={now} />
+      </div>
       <div className="flex justify-end gap-2">
         <Button type="button" variant="ghost" onClick={reset}>
           <X />

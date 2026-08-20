@@ -43,7 +43,7 @@ const DailyMoodSchema = z.object({
 });
 
 const SettingsSchema = z
-  .object({ birthYear: z.number().optional() })
+  .object({ birthDate: z.string().optional() })
   .default({});
 
 const AppDataSchema = z.object({
@@ -66,11 +66,13 @@ export function backupFilename(now: Date = new Date(), suffix = ""): string {
   return suffix ? `${base}-${suffix}.json` : `${base}.json`;
 }
 
-/** JSON をファイルとしてダウンロードさせる(クライアント専用) */
-export function downloadJson(data: unknown, filename: string): void {
-  const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: "application/json",
-  });
+/** テキストをファイルとしてダウンロードさせる(クライアント専用) */
+export function downloadText(
+  text: string,
+  filename: string,
+  type = "text/plain",
+): void {
+  const blob = new Blob([text], { type });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -79,4 +81,9 @@ export function downloadJson(data: unknown, filename: string): void {
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+}
+
+/** JSON をファイルとしてダウンロードさせる(クライアント専用) */
+export function downloadJson(data: unknown, filename: string): void {
+  downloadText(JSON.stringify(data, null, 2), filename, "application/json");
 }

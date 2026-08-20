@@ -74,8 +74,8 @@ export interface DailyMood {
 }
 
 export interface Settings {
-  /** 「◯歳から」の表現に使う任意設定(西暦のみ) */
-  birthYear?: number;
+  /** 「◯歳から」の表現に使う任意設定。ローカル YYYY-MM-DD(端末内のみ保存) */
+  birthDate?: string;
 }
 
 export const APP_DATA_VERSION = 1;

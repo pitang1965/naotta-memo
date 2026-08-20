@@ -3,6 +3,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAppData } from "@/hooks/useAppData";
 import { latestCheckinAt } from "@/domain/episodes";
+import { deleteCheckin, editCheckin, replaceIssue } from "@/domain/operations";
 import { Input } from "@/components/ui/input";
 import { IssueHistory } from "@/components/IssueHistory";
 
@@ -11,7 +12,7 @@ export const Route = createFileRoute("/history")({
 });
 
 function History() {
-  const { data, error, ready } = useAppData();
+  const { data, error, ready, update } = useAppData();
   const [q, setQ] = useState("");
   const now = new Date();
 
@@ -61,7 +62,17 @@ function History() {
       ) : (
         <div className="flex flex-col gap-2">
           {issues.map((issue) => (
-            <IssueHistory key={issue.id} issue={issue} now={now} />
+            <IssueHistory
+              key={issue.id}
+              issue={issue}
+              now={now}
+              onEditCheckin={(cid, patch) =>
+                update((d) => replaceIssue(d, editCheckin(issue, cid, patch)))
+              }
+              onDeleteCheckin={(cid) =>
+                update((d) => replaceIssue(d, deleteCheckin(issue, cid)))
+              }
+            />
           ))}
         </div>
       )}

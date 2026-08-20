@@ -63,4 +63,22 @@ describe("buildVisitExport", () => {
     expect(empty).toContain("■ 続いている症状");
     expect(empty).toContain("・なし");
   });
+
+  it("生年月日が設定されていれば発症時点の満年齢を添える", () => {
+    // 生年月日 1994-01-15 / 発症 2026-08-03 → 誕生日後なので 32 歳
+    const data = { ...scenarioData(), settings: { birthDate: "1994-01-15" } };
+    expect(buildVisitExport(data, now)).toContain(
+      "32歳(2026年8月3日)から断続的",
+    );
+  });
+
+  it("発症日が誕生日より前なら1つ下の年齢になる", () => {
+    // 生年月日 1994-12-25 / 発症 2026-08-03 → 誕生日前なので 31 歳
+    const data = { ...scenarioData(), settings: { birthDate: "1994-12-25" } };
+    expect(buildVisitExport(data, now)).toContain("31歳(2026年8月3日)から");
+  });
+
+  it("生年月日が未設定なら年齢は出さない", () => {
+    expect(buildVisitExport(scenarioData(), now)).not.toContain("歳(");
+  });
 });

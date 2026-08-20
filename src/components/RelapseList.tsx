@@ -5,6 +5,7 @@ import { jpDate } from "@/lib/labels";
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from "lucide-react";
 import { DeleteIssueButton } from "@/components/DeleteIssueButton";
+import { EventDateDialog } from "@/components/EventDateDialog";
 
 /** 直近の(閉じた)エピソードの期間表示 */
 function lastEpisodeSummary(issue: Issue): string | null {
@@ -22,11 +23,13 @@ function lastEpisodeSummary(issue: Issue): string | null {
 
 export function RelapseList({
   resolved,
+  now,
   onRelapse,
   onDelete,
 }: {
   resolved: Issue[];
-  onRelapse: (issue: Issue) => void;
+  now: Date;
+  onRelapse: (issue: Issue, atISO: string) => void;
   onDelete: (issue: Issue) => void;
 }) {
   if (resolved.length === 0) return null;
@@ -53,14 +56,19 @@ export function RelapseList({
               )}
             </div>
             <div className="flex shrink-0 items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onRelapse(issue)}
-              >
-                <RotateCcw />
-                再発
-              </Button>
+              <EventDateDialog
+                title="再発した日"
+                description="いつぶり返しましたか?(過去の日も選べます)"
+                confirmLabel="再発を記録"
+                now={now}
+                onConfirm={(at) => onRelapse(issue, at)}
+                trigger={
+                  <Button variant="outline" size="sm">
+                    <RotateCcw />
+                    再発
+                  </Button>
+                }
+              />
               <DeleteIssueButton
                 name={issue.name}
                 onDelete={() => onDelete(issue)}

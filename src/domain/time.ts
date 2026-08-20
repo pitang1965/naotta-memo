@@ -56,3 +56,13 @@ export function recentDayKeys(n: number, now: Date = new Date()): string[] {
   for (let i = n - 1; i >= 0; i--) keys.push(addDays(today, -i));
   return keys;
 }
+
+/**
+ * 選んだ日付(ローカル YYYY-MM-DD)を、保存用の ISO タイムスタンプにする。
+ * 今日なら現在時刻(日内の順序を保つため)、過去日ならその日の正午(日付が安定する)。
+ */
+export function atForDateKey(key: string, now: Date = new Date()): string {
+  if (key === todayKey(now)) return now.toISOString();
+  const [y, m, d] = key.split("-").map(Number);
+  return new Date(y, m - 1, d, 12, 0, 0).toISOString();
+}

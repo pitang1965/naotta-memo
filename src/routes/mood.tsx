@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAppData } from "@/hooks/useAppData";
+import { clearMood, upsertMood } from "@/domain/operations";
 import { MoodReview } from "@/components/MoodReview";
 
 export const Route = createFileRoute("/mood")({
@@ -8,7 +9,7 @@ export const Route = createFileRoute("/mood")({
 });
 
 function MoodPage() {
-  const { data, error, ready } = useAppData();
+  const { data, error, ready, update } = useAppData();
   const now = new Date();
 
   let body: ReactNode;
@@ -21,7 +22,14 @@ function MoodPage() {
   } else if (!ready || !data) {
     body = <p className="text-muted-foreground text-sm">読み込み中…</p>;
   } else {
-    body = <MoodReview data={data} now={now} />;
+    body = (
+      <MoodReview
+        data={data}
+        now={now}
+        onSet={(date, mood) => update((d) => upsertMood(d, date, mood))}
+        onClear={(date) => update((d) => clearMood(d, date))}
+      />
+    );
   }
 
   return (

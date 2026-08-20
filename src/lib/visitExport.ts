@@ -28,7 +28,18 @@ function byLatestDesc(a: Issue, b: Issue): number {
   return latestCheckinAt(a) < latestCheckinAt(b) ? 1 : -1;
 }
 
-function activeLines(issue: Issue, now: Date): string[] {
+/** 生年月日から、ある日付時点の満年齢。生年月日未設定や不整合なら null */
+function ageOn(dateKey: string, birthDate?: string): number | null {
+  if (!birthDate) return null;
+  const [oy, om, od] = dateKey.split("-").map(Number);
+  const [by, bm, bd] = birthDate.split("-").map(Number);
+  if (!by || !bm || !bd) return null;
+  let age = oy - by;
+  if (om < bm || (om === bm && od < bd)) age -= 1;
+  return age >= 0 && age < 130 ? age : null;
+}
+
+function activeLines(issue: Issue, now: Date, birthDate?: string): string[] {
   const lines = [`・${issue.name}`];
   const span = diseaseSpan(issue, now);
   const ep = currentEpisode(issue);
@@ -36,12 +47,17 @@ function activeLines(issue: Issue, now: Date): string[] {
 
   if (span && ep && days !== null) {
     const startKey = localDateKey(ep.startAt);
+    const age = ageOn(span.fromKey, birthDate);
+    const from =
+      age !== null
+        ? `${age}歳(${jpDateFull(span.fromKey)})`
+        : jpDateFull(span.fromKey);
     if (span.episodeCount > 1) {
       lines.push(
-        `  ${jpDateFull(span.fromKey)}から断続的(${span.episodeCount}回)。今回は${jpDate(startKey)}から${days}日目。`,
+        `  ${from}から断続的(${span.episodeCount}回)。今回は${jpDate(startKey)}から${days}日目。`,
       );
     } else {
-      lines.push(`  ${jpDateFull(span.fromKey)}から${days}日目、続いています。`);
+      lines.push(`  ${from}から${days}日目、続いています。`);
     }
 
     const recent = ep.checkins.slice(-RECENT_CHECKINS).map((c) => {
@@ -83,7 +99,7 @@ export function buildVisitExport(data: AppData, now: Date = new Date()): string 
 
   out.push("■ 続いている症状");
   if (active.length === 0) out.push("・なし");
-  else for (const i of active) out.push(...activeLines(i, now));
+  else for (const i of active) out.push(...activeLines(i, now, data.settings.birthDate));
   out.push("");
 
   out.push("■ 最近治った症状");

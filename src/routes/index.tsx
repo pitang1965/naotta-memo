@@ -104,8 +104,8 @@ function Home() {
               issue={issue}
               now={now}
               onRecord={(status, note) => onRecord(issue, status, note)}
-              onResolve={() =>
-                update((d) => replaceIssue(d, resolveIssue(issue)))
+              onResolve={(at) =>
+                update((d) => replaceIssue(d, resolveIssue(issue, at)))
               }
               onEditCheckin={(id, patch) =>
                 update((d) => replaceIssue(d, editCheckin(issue, id, patch)))
@@ -118,16 +118,18 @@ function Home() {
           ))
         )}
         <AddSymptom
-          onAdd={(name, note) =>
-            update((d) => addIssue(d, createIssue(name, undefined, note)))
+          now={now}
+          onAdd={(name, note, at) =>
+            update((d) => addIssue(d, createIssue(name, at, note)))
           }
         />
       </section>
 
       <RelapseList
         resolved={resolved}
-        onRelapse={(issue) =>
-          update((d) => replaceIssue(d, relapseIssue(issue)))
+        now={now}
+        onRelapse={(issue, at) =>
+          update((d) => replaceIssue(d, relapseIssue(issue, at)))
         }
         onDelete={(issue) => update((d) => removeIssue(d, issue.id))}
       />

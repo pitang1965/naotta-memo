@@ -1,15 +1,26 @@
-import type { Issue } from "@/domain/types";
+import type { Checkin, Issue } from "@/domain/types";
 import {
   currentEpisodeDays,
   deriveEpisodes,
   deriveStatus,
   diseaseSpan,
 } from "@/domain/episodes";
-import { localDateKey, localTime } from "@/domain/time";
-import { jpDate, jpDateFull, STATUS_LABEL } from "@/lib/labels";
+import { localDateKey } from "@/domain/time";
+import { jpDate, jpDateFull } from "@/lib/labels";
 import { cn } from "@/lib/utils";
+import { CheckinRow } from "@/components/CheckinRow";
 
-export function IssueHistory({ issue, now }: { issue: Issue; now: Date }) {
+export function IssueHistory({
+  issue,
+  now,
+  onEditCheckin,
+  onDeleteCheckin,
+}: {
+  issue: Issue;
+  now: Date;
+  onEditCheckin: (checkinId: string, patch: Partial<Omit<Checkin, "id">>) => void;
+  onDeleteCheckin: (checkinId: string) => void;
+}) {
   const active = deriveStatus(issue) === "active";
   const episodes = deriveEpisodes(issue);
   const span = diseaseSpan(issue, now);
@@ -63,15 +74,13 @@ export function IssueHistory({ issue, now }: { issue: Issue; now: Date }) {
               </p>
               <ul className="border-border ml-1 flex flex-col gap-1.5 border-l pl-3">
                 {ep.checkins.map((c) => (
-                  <li key={c.id} className="text-sm leading-snug">
-                    <span className="text-muted-foreground text-xs tabular-nums">
-                      {jpDate(localDateKey(c.at))} {localTime(c.at)}
-                    </span>{" "}
-                    <span className="font-medium">{STATUS_LABEL[c.status]}</span>
-                    {c.note && (
-                      <span className="text-muted-foreground"> — {c.note}</span>
-                    )}
-                  </li>
+                  <CheckinRow
+                    key={c.id}
+                    checkin={c}
+                    withDate
+                    onEdit={(patch) => onEditCheckin(c.id, patch)}
+                    onDelete={() => onDeleteCheckin(c.id)}
+                  />
                 ))}
               </ul>
             </div>

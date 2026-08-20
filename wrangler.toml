@@ -1,7 +1,3 @@
 name = "naotta-memo"
 pages_build_output_dir = "dist/client"
 compatibility_date = "2026-04-23"
-compatibility_flags = [ "nodejs_compat" ]
-
-[observability]
-enabled = true

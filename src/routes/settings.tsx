@@ -1,7 +1,10 @@
 import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAppData } from "@/hooks/useAppData";
+import { addIssue, updateSettings } from "@/domain/operations";
 import { BackupSection } from "@/components/BackupSection";
+import { ProfileSection } from "@/components/ProfileSection";
+import { CsvImport } from "@/components/CsvImport";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -20,7 +23,20 @@ function SettingsPage() {
   } else if (!ready || !data) {
     body = <p className="text-muted-foreground text-sm">読み込み中…</p>;
   } else {
-    body = <BackupSection data={data} onReplace={(nd) => update(() => nd)} />;
+    body = (
+      <div className="flex flex-col gap-4">
+        <ProfileSection
+          birthDate={data.settings.birthDate}
+          onSave={(bd) => update((d) => updateSettings(d, { birthDate: bd }))}
+        />
+        <CsvImport
+          onImport={(issues) =>
+            update((d) => issues.reduce((acc, i) => addIssue(acc, i), d))
+          }
+        />
+        <BackupSection data={data} onReplace={(nd) => update(() => nd)} />
+      </div>
+    );
   }
 
   return (
