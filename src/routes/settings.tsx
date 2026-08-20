@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAppData } from "@/hooks/useAppData";
 import { addIssue, updateSettings } from "@/domain/operations";
 import { BackupSection } from "@/components/BackupSection";
@@ -45,6 +45,14 @@ function SettingsPage() {
         <h1 className="font-serif text-lg font-semibold tracking-wide">設定</h1>
       </header>
       {body}
+      <footer className="text-muted-foreground border-border mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 border-t pt-4 text-xs">
+        <Link to="/terms" className="hover:text-foreground hover:underline">
+          利用規約
+        </Link>
+        <Link to="/privacy" className="hover:text-foreground hover:underline">
+          プライバシーポリシー
+        </Link>
+      </footer>
     </main>
   );
 }
