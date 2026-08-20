@@ -18,6 +18,7 @@ import {
 } from "@/domain/operations";
 import { jpDate } from "@/lib/labels";
 import { useAppData } from "@/hooks/useAppData";
+import { BrandMark } from "@/components/BrandMark";
 import { MoodPicker } from "@/components/MoodPicker";
 import { SymptomCard } from "@/components/SymptomCard";
 import { AddSymptom } from "@/components/AddSymptom";
@@ -144,7 +145,10 @@ function Shell({ children }: { children: ReactNode }) {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 px-4 pt-6 pb-24">
       <header className="flex items-baseline justify-between">
-        <h1 className="font-serif text-xl font-semibold tracking-wide">
+        <h1 className="relative pl-[1.05em] font-serif text-xl font-semibold tracking-wide">
+          {/* 行ボックスの中央に対して中央寄せする。フォントサイズもマークの大きさも
+              変わってよいように、固定のオフセットは持たせない。 */}
+          <BrandMark className="text-primary absolute top-1/2 left-0 size-[0.74em] -translate-y-1/2" />
           なおった<span className="text-primary">・</span>メモ
         </h1>
         <span className="text-muted-foreground text-xs tabular-nums">

@@ -1,4 +1,4 @@
-const ASSET_CACHE = 'naotta-assets-v1'
+const ASSET_CACHE = 'naotta-assets-v2'
 
 self.addEventListener('install', () => self.skipWaiting())
 

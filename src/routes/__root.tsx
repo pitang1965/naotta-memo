@@ -60,7 +60,11 @@ export const Route = createRootRoute({
       { name: "description", content: SITE_DESCRIPTION },
       { name: "theme-color", content: "#F2F0EA" },
     ],
-    links: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
+    // iOS のホーム画面は SVG を読まないので apple-touch-icon の PNG が要る。
+    links: [
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+    ],
   }),
   component: () => (
     <RootDocument>
