@@ -1,13 +1,22 @@
 {
+  "id": "/",
   "name": "なおったメモ",
-  "short_name": "なおったメモ",
-  "description": "症状のはじまりから「治った」まで記録する、個人用の体調メモ。",
+  "short_name": "なおった",
+  "description": "症状のはじまりから「治った」まで記録する、個人用の体調メモ。通院のとき、まとめてそのまま見せられる。",
   "lang": "ja",
+  "dir": "ltr",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
   "background_color": "#F2F0EA",
   "theme_color": "#F2F0EA",
+  "categories": ["health", "medical", "lifestyle"],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
   "icons": [
     {
       "src": "/favicon.svg",
@@ -32,6 +41,22 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "今日の調子をつける",
+      "short_name": "調子",
+      "description": "その日の総合的な体調を4段階で残す。",
+      "url": "/mood",
+      "icons": [{ "src": "/shortcut-mood.png", "sizes": "96x96", "type": "image/png" }]
+    },
+    {
+      "name": "履歴を見る",
+      "short_name": "履歴",
+      "description": "これまでの症状と治った記録を振り返る。",
+      "url": "/history",
+      "icons": [{ "src": "/shortcut-history.png", "sizes": "96x96", "type": "image/png" }]
     }
   ]
 }

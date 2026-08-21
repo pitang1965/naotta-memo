@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "icons": "node scripts/icon/build.mjs && node scripts/icon/raster.mjs && node scripts/icon/og.mjs"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.170.17",
@@ -26,12 +27,16 @@
     "zod": "^4.4.3"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "workerd"]
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "workerd"
+    ]
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.43.0",
     "@cloudflare/workers-types": "^4.20260702.1",
     "@eslint/js": "^9.39.4",
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.3.2",
     "@types/node": "^24.13.2",
     "@types/react": "^19.2.17",
