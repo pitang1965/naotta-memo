@@ -3,6 +3,7 @@ import {
   addCheckin,
   addIssue,
   createIssue,
+  dismissIssue,
   emptyAppData,
   resolveIssue,
   upsertMood,
@@ -46,6 +47,17 @@ describe("parseBackup", () => {
     const restored = parseBackup(JSON.stringify(d));
     expect(restored).toEqual(d);
     expect(restored.issues[0].checkins.at(-1)?.resolvedDateUnknown).toBe(true);
+  });
+
+  it("「気にしない」の印をバックアップ往復で保つ", () => {
+    const issue = dismissIssue(
+      createIssue("肩こり", "2026-08-01T09:00:00", ""),
+      "2026-08-20T09:00:00",
+    );
+    const d = addIssue(emptyAppData(), issue);
+    const restored = parseBackup(JSON.stringify(d));
+    expect(restored).toEqual(d);
+    expect(restored.issues[0].dismissedAt).toBe("2026-08-20T09:00:00");
   });
 
   it("version 欠落は既定で補う", () => {

@@ -39,20 +39,30 @@ export function createIssue(
   };
 }
 
+/**
+ * エントリを1件足す。memo 以外を足したら「気にしない」を解除する。
+ * また経過を追い始めたということなので、隠れたままだと記録が迷子になる。
+ * memo が解除しないのは ADR 0006(memo は状態を変えない)と揃えるため。
+ */
+function appendCheckin(issue: Issue, entry: Checkin): Issue {
+  const next = { ...issue, checkins: [...issue.checkins, entry] };
+  if (entry.status !== "memo" && next.dismissedAt) delete next.dismissedAt;
+  return next;
+}
+
 /** 任意の状態のエントリを1件足す(worse/same/better/resolved/relapse/start) */
 export function addCheckin(
   issue: Issue,
   status: Status,
   opts: { at?: string; note?: string; pressure?: Checkin["pressure"] } = {},
 ): Issue {
-  const entry: Checkin = {
+  return appendCheckin(issue, {
     id: newId(),
     at: opts.at ?? nowIso(),
     status,
     note: opts.note ?? "",
     ...(opts.pressure !== undefined ? { pressure: opts.pressure } : {}),
-  };
-  return { ...issue, checkins: [...issue.checkins, entry] };
+  });
 }
 
 /** 治癒を確定する。治った日(at)は既定=今、過去日も指定可 */
@@ -64,7 +74,7 @@ export function resolveIssue(
     const latest = Math.max(
       ...issue.checkins.map((c) => new Date(c.at).getTime()),
     );
-    const entry: Checkin = {
+    return appendCheckin(issue, {
       id: newId(),
       at: new Date(
         Number.isFinite(latest) ? latest + 1 : Date.now(),
@@ -72,10 +82,21 @@ export function resolveIssue(
       status: "resolved",
       note: "",
       resolvedDateUnknown: true,
-    };
-    return { ...issue, checkins: [...issue.checkins, entry] };
+    });
   }
   return addCheckin(issue, "resolved", { at });
+}
+
+/** 「気にしない」ことにする。治癒ではないので状態(Status)は足さない */
+export function dismissIssue(issue: Issue, at: string = nowIso()): Issue {
+  return { ...issue, dismissedAt: at };
+}
+
+/** 「気にしない」を解除して、また経過を追う */
+export function undismissIssue(issue: Issue): Issue {
+  const next = { ...issue };
+  delete next.dismissedAt;
+  return next;
 }
 
 /** 再発を記録する。ぶり返した日(at)は既定=今、過去日も指定可。新しいエピソードが始まる */

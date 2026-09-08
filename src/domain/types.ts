@@ -64,6 +64,12 @@ export interface Issue {
   name: string;
   /** 時刻つきエントリの流れ(順不同で保持してよい。導出時にソートする) */
   checkins: Checkin[];
+  /**
+   * 「気にしない」ことにした時刻(ISO)。治ってはいないが経過を追うのをやめた状態。
+   * 治癒ではないので状態遷移(Status)ではなく、スレッドの属性として持つ。
+   * memo 以外のチェックインを足すと解除される(→ operations.addCheckin)。
+   */
+  dismissedAt?: string;
 }
 
 export type Mood = "great" | "ok" | "meh" | "bad";

@@ -90,11 +90,12 @@ export function buildVisitExport(
   data: AppData,
   now: Date = new Date(),
 ): string {
+  // 「気にしない」ことにした症状は、医者に見せる要約には出さない
   const active = data.issues
-    .filter((i) => deriveStatus(i) === "active")
+    .filter((i) => !i.dismissedAt && deriveStatus(i) === "active")
     .sort(byLatestDesc);
   const resolved = data.issues
-    .filter((i) => deriveStatus(i) === "resolved")
+    .filter((i) => !i.dismissedAt && deriveStatus(i) === "resolved")
     .sort(byLatestDesc)
     .slice(0, RECENT_RESOLVED);
 

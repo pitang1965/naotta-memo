@@ -58,7 +58,13 @@ export function IssueHistory({
   onRename: (name: string) => void;
   onDeleteIssue: () => void;
 }) {
+  // 「気にしない」は治癒でも継続でもないので、バッジは3値
   const active = deriveStatus(issue) === "active";
+  const badge = issue.dismissedAt
+    ? "気にしない"
+    : active
+      ? "続いている"
+      : "治った";
   const episodes = deriveEpisodes(issue);
   const span = diseaseSpan(issue, now);
   const [renaming, setRenaming] = useState(false);
@@ -81,12 +87,12 @@ export function IssueHistory({
             <span
               className={cn(
                 "shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium",
-                active
+                active && !issue.dismissedAt
                   ? "bg-primary/10 text-primary"
                   : "bg-muted text-muted-foreground",
               )}
             >
-              {active ? "続いている" : "治った"}
+              {badge}
             </span>
           </div>
           <p className="text-muted-foreground text-xs tabular-nums">

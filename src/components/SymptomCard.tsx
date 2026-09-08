@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { BellOff, Check } from "lucide-react";
 import type { Checkin, Issue, MagnitudeStatus } from "@/domain/types";
 import { MAGNITUDE_STATUSES } from "@/domain/types";
 import { currentEpisodeDays, sortedCheckins } from "@/domain/episodes";
@@ -25,6 +25,7 @@ export function SymptomCard({
   now,
   onRecord,
   onResolve,
+  onDismiss,
   onEditCheckin,
   onDeleteCheckin,
   onDeleteIssue,
@@ -33,7 +34,11 @@ export function SymptomCard({
   now: Date;
   onRecord: (status: MagnitudeStatus | "memo", note: string) => void;
   onResolve: (atISO: string | null) => void;
-  onEditCheckin: (checkinId: string, patch: Partial<Omit<Checkin, "id">>) => void;
+  onDismiss: () => void;
+  onEditCheckin: (
+    checkinId: string,
+    patch: Partial<Omit<Checkin, "id">>,
+  ) => void;
   onDeleteCheckin: (checkinId: string) => void;
   onDeleteIssue: () => void;
 }) {
@@ -41,7 +46,9 @@ export function SymptomCard({
   const [selected, setSelected] = useState<MagnitudeStatus | null>(null);
   const days = currentEpisodeDays(issue, now);
   const key = todayKey(now);
-  const todays = sortedCheckins(issue).filter((c) => localDateKey(c.at) === key);
+  const todays = sortedCheckins(issue).filter(
+    (c) => localDateKey(c.at) === key,
+  );
 
   const toggle = (s: MagnitudeStatus) =>
     setSelected((prev) => (prev === s ? null : s));
@@ -63,7 +70,9 @@ export function SymptomCard({
             {days !== null && (
               <span className="text-muted-foreground text-xs tabular-nums">
                 このぶり返し{" "}
-                <span className="text-primary text-sm font-semibold">{days}</span>{" "}
+                <span className="text-primary text-sm font-semibold">
+                  {days}
+                </span>{" "}
                 日目
               </span>
             )}
@@ -120,7 +129,9 @@ export function SymptomCard({
           />
           <div className="flex items-center justify-between gap-2">
             <span className="text-muted-foreground text-xs">
-              {selected ? `${STATUS_LABEL[selected]} として記録` : "メモ として記録"}
+              {selected
+                ? `${STATUS_LABEL[selected]} として記録`
+                : "メモ として記録"}
             </span>
             <Button size="sm" disabled={!canSave} onClick={save}>
               <Check />
@@ -129,7 +140,15 @@ export function SymptomCard({
           </div>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex items-center justify-between gap-2">
+          {/* 治ってはいないが追うのをやめる。治癒の主張はしない */}
+          <button
+            onClick={onDismiss}
+            className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-sm underline-offset-2 hover:underline"
+          >
+            <BellOff className="size-4" />
+            気にしない
+          </button>
           <EventDateDialog
             title="治った日"
             description="いつ治りましたか?(過去の日も選べます)"

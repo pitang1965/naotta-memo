@@ -36,6 +36,7 @@ const IssueSchema = z.object({
   id: z.string(),
   name: z.string(),
   checkins: z.array(CheckinSchema),
+  dismissedAt: z.string().optional(),
 });
 
 const DailyMoodSchema = z.object({

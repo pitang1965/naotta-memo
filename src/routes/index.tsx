@@ -9,8 +9,10 @@ import {
   clearMood,
   createIssue,
   deleteCheckin,
+  dismissIssue,
   editCheckin,
   relapseIssue,
+  undismissIssue,
   removeIssue,
   replaceIssue,
   resolveIssue,
@@ -23,6 +25,7 @@ import { MoodPicker } from "@/components/MoodPicker";
 import { SymptomCard } from "@/components/SymptomCard";
 import { AddSymptom } from "@/components/AddSymptom";
 import { RelapseList } from "@/components/RelapseList";
+import { DismissedList } from "@/components/DismissedList";
 import { VisitExport } from "@/components/VisitExport";
 
 export const Route = createFileRoute("/")({
@@ -58,8 +61,11 @@ function Home() {
     );
   }
 
-  const active = data.issues.filter((i) => deriveStatus(i) === "active");
-  const resolved = data.issues
+  // 「気にしない」は治癒でも継続でもない第三の置き場。どちらの一覧にも混ぜない。
+  const dismissed = data.issues.filter((i) => i.dismissedAt);
+  const tracked = data.issues.filter((i) => !i.dismissedAt);
+  const active = tracked.filter((i) => deriveStatus(i) === "active");
+  const resolved = tracked
     .filter((i) => deriveStatus(i) === "resolved")
     .sort((a, b) => (latestCheckinAt(a) < latestCheckinAt(b) ? 1 : -1));
 
@@ -108,6 +114,9 @@ function Home() {
               onResolve={(at) =>
                 update((d) => replaceIssue(d, resolveIssue(issue, at)))
               }
+              onDismiss={() =>
+                update((d) => replaceIssue(d, dismissIssue(issue)))
+              }
               onEditCheckin={(id, patch) =>
                 update((d) => replaceIssue(d, editCheckin(issue, id, patch)))
               }
@@ -131,6 +140,14 @@ function Home() {
         now={now}
         onRelapse={(issue, at) =>
           update((d) => replaceIssue(d, relapseIssue(issue, at)))
+        }
+        onDelete={(issue) => update((d) => removeIssue(d, issue.id))}
+      />
+
+      <DismissedList
+        dismissed={dismissed}
+        onRestore={(issue) =>
+          update((d) => replaceIssue(d, undismissIssue(issue)))
         }
         onDelete={(issue) => update((d) => removeIssue(d, issue.id))}
       />

@@ -3,6 +3,7 @@ import {
   addCheckin,
   addIssue,
   createIssue,
+  dismissIssue,
   emptyAppData,
   relapseIssue,
   resolveIssue,
@@ -65,6 +66,12 @@ describe("buildVisitExport", () => {
     issue = resolveIssue(issue, null);
     const data = addIssue(emptyAppData(), issue);
     expect(buildVisitExport(data, now)).toContain("・胃痛  8月1日〜不明");
+  });
+
+  it("「気にしない」ことにした症状は通院用に出さない", () => {
+    const issue = dismissIssue(createIssue("肩こり", at("2026-08-01"), ""));
+    const text = buildVisitExport(addIssue(emptyAppData(), issue), now);
+    expect(text).not.toContain("肩こり");
   });
 
   it("空データでも見出しと『なし』を出す", () => {
