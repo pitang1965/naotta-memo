@@ -8,6 +8,10 @@ import {
   diseaseSpan,
 } from "@/domain/episodes";
 import { localDateKey } from "@/domain/time";
+import {
+  isInHistoryRange,
+  type HistoryDateRange,
+} from "@/domain/historySearch";
 import { jpDate, jpDateFull } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -30,6 +34,9 @@ function groupByDay(checkins: Checkin[]): [string, Checkin[]][] {
 
 export function IssueHistory({
   issue,
+  dateRange,
+  latestAt,
+  recordCount,
   now,
   onEditCheckin,
   onDeleteCheckin,
@@ -38,8 +45,14 @@ export function IssueHistory({
   onDeleteIssue,
 }: {
   issue: Issue;
+  dateRange?: HistoryDateRange;
+  latestAt: string;
+  recordCount: number;
   now: Date;
-  onEditCheckin: (checkinId: string, patch: Partial<Omit<Checkin, "id">>) => void;
+  onEditCheckin: (
+    checkinId: string,
+    patch: Partial<Omit<Checkin, "id">>,
+  ) => void;
   onDeleteCheckin: (checkinId: string) => void;
   onDeleteDay: (dateKey: string) => void;
   onRename: (name: string) => void;
@@ -76,12 +89,10 @@ export function IssueHistory({
               {active ? "続いている" : "治った"}
             </span>
           </div>
-          {span && (
-            <p className="text-muted-foreground text-xs tabular-nums">
-              {jpDateFull(span.fromKey)}から
-              {span.intermittent ? "断続的" : "継続的"}・{span.episodeCount}回
-            </p>
-          )}
+          <p className="text-muted-foreground text-xs tabular-nums">
+            {dateRange?.from || dateRange?.to ? "期間内の最新記録" : "最新記録"}
+            ：{jpDateFull(localDateKey(latestAt))}・{recordCount}件
+          </p>
         </div>
         <span className="text-muted-foreground shrink-0 text-xs">
           <span className="group-open:hidden">開く</span>
@@ -90,7 +101,22 @@ export function IssueHistory({
       </summary>
 
       <div className="border-border flex flex-col gap-4 border-t px-4 py-3">
+        {span && (
+          <p className="text-muted-foreground text-xs tabular-nums">
+            症状全体：初回発症 {jpDateFull(span.fromKey)}から
+            {span.intermittent ? "断続的" : "継続的"}・{span.episodeCount}回
+          </p>
+        )}
+        {(dateRange?.from || dateRange?.to) && (
+          <p className="text-muted-foreground text-xs">
+            以下は指定期間内の記録です。発症・治癒日は症状全体の経過を示します。
+          </p>
+        )}
         {episodes.map((ep) => {
+          const visibleCheckins = dateRange
+            ? ep.checkins.filter((c) => isInHistoryRange(c, dateRange))
+            : ep.checkins;
+          if (visibleCheckins.length === 0) return null;
           const startKey = localDateKey(ep.startAt);
           const endKey = ep.endAt ? localDateKey(ep.endAt) : null;
           const dayNow = ep.closed ? null : currentEpisodeDays(issue, now);
@@ -105,7 +131,7 @@ export function IssueHistory({
                     : ""}
               </p>
               <div className="flex flex-col gap-2">
-                {groupByDay(ep.checkins).map(([dateKey, dayCheckins]) => (
+                {groupByDay(visibleCheckins).map(([dateKey, dayCheckins]) => (
                   <div key={dateKey}>
                     <div className="mb-1 flex items-center justify-between gap-2">
                       <span className="text-muted-foreground text-xs font-medium tabular-nums">

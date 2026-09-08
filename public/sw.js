@@ -15,6 +15,14 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const { request } = event
+  const url = new URL(request.url)
+
+  // Vite が配信するソースや依存モジュールをキャッシュしない。
+  // 同じ URL の旧コードが残ると、更新後の React と混在してしまう。
+  if (
+    (request.destination === 'script' || request.destination === 'style') &&
+    !url.pathname.startsWith('/assets/')
+  ) return
 
   // 静的アセット (JS/CSS/画像/フォント): CacheFirst でオフライン起動を支える。
   // データは localStorage 側にあるため、SW はアプリの外殻だけをキャッシュすればよい。

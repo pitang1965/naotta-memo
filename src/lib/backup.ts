@@ -43,7 +43,10 @@ const DailyMoodSchema = z.object({
 });
 
 const SettingsSchema = z
-  .object({ birthDate: z.string().optional() })
+  .object({
+    birthDate: z.string().optional(),
+    historySortOrder: z.enum(["newest", "oldest"]).optional(),
+  })
   .default({});
 
 const AppDataSchema = z.object({

@@ -11,13 +11,26 @@ import { backupFilename, parseBackup } from "@/lib/backup";
 function sample() {
   let d = emptyAppData();
   let issue = createIssue("頭痛", "2026-08-03T09:00:00", "初期メモ");
-  issue = addCheckin(issue, "worse", { at: "2026-08-04T09:00:00", note: "痛い" });
+  issue = addCheckin(issue, "worse", {
+    at: "2026-08-04T09:00:00",
+    note: "痛い",
+  });
   d = addIssue(d, issue);
   d = upsertMood(d, "2026-08-04", "meh");
   return d;
 }
 
 describe("parseBackup", () => {
+  it("並び順をバックアップ復元後も保持し、古いデータも読み込める", () => {
+    const data = {
+      ...sample(),
+      settings: { birthDate: "1990-01-15", historySortOrder: "oldest" },
+    };
+    expect(parseBackup(JSON.stringify(data))).toEqual(data);
+    expect(
+      parseBackup(JSON.stringify(sample())).settings.historySortOrder,
+    ).toBeUndefined();
+  });
   it("エクスポート→インポートで往復して一致する", () => {
     const data = sample();
     const text = JSON.stringify(data);
@@ -43,7 +56,11 @@ describe("parseBackup", () => {
     const bad = {
       version: 1,
       issues: [
-        { id: "x", name: "頭痛", checkins: [{ id: "c", at: "t", status: "bogus", note: "" }] },
+        {
+          id: "x",
+          name: "頭痛",
+          checkins: [{ id: "c", at: "t", status: "bogus", note: "" }],
+        },
       ],
       daily: [],
       settings: {},
@@ -58,7 +75,10 @@ describe("backupFilename", () => {
     expect(name).toBe("naotta-memo-backup-20260809.json");
   });
   it("suffix つき", () => {
-    const name = backupFilename(new Date("2026-08-09T10:00:00"), "before-import");
+    const name = backupFilename(
+      new Date("2026-08-09T10:00:00"),
+      "before-import",
+    );
     expect(name).toBe("naotta-memo-backup-20260809-before-import.json");
   });
 });

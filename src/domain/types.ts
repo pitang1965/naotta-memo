@@ -73,7 +73,10 @@ export interface DailyMood {
   mood: Mood;
 }
 
+export type HistorySortOrder = "newest" | "oldest";
+
 export interface Settings {
+  historySortOrder?: HistorySortOrder;
   /** 「◯歳から」の表現に使う任意設定。ローカル YYYY-MM-DD(端末内のみ保存) */
   birthDate?: string;
 }

@@ -11,15 +11,35 @@ import { BottomNav } from "../components/BottomNav";
 import { Celebration } from "../components/Celebration";
 
 function RootDocument({ children }: { children: ReactNode }) {
-  // Service Worker 登録(PWA)。クライアントでのみ動く。
+  // 開発用モジュールを古いキャッシュから配信しないよう、PWA は本番のみ。
   useEffect(() => {
-    if ("serviceWorker" in navigator && typeof window !== "undefined") {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("/sw.js", { scope: "/" })
-          .catch((err) => console.warn("[SW] Registration failed:", err));
-      });
+    if (!("serviceWorker" in navigator)) return;
+    if (import.meta.env.DEV) {
+      void navigator.serviceWorker
+        .getRegistrations()
+        .then(async (registrations) => {
+          for (const registration of registrations) {
+            const worker =
+              registration.active ??
+              registration.waiting ??
+              registration.installing;
+            if (worker?.scriptURL === new URL("/sw.js", location.origin).href) {
+              await registration.unregister();
+            }
+          }
+        })
+        .catch((err) => console.warn("[SW] Cleanup failed:", err));
+      return;
     }
+
+    const register = () => {
+      void navigator.serviceWorker
+        .register("/sw.js", { scope: "/" })
+        .catch((err) => console.warn("[SW] Registration failed:", err));
+    };
+    if (document.readyState === "complete") register();
+    else window.addEventListener("load", register, { once: true });
+    return () => window.removeEventListener("load", register);
   }, []);
 
   return (
