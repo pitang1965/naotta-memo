@@ -12,11 +12,12 @@ function lastEpisodeSummary(issue: Issue): string | null {
   const eps = deriveEpisodes(issue);
   for (let i = eps.length - 1; i >= 0; i--) {
     const ep = eps[i];
-    if (ep.closed && ep.endAt) {
-      const from = jpDate(localDateKey(ep.startAt));
-      const to = jpDate(localDateKey(ep.endAt));
-      return `${from}〜${to}(${ep.durationDays}日間)`;
-    }
+    if (!ep.closed) continue;
+    const from = jpDate(localDateKey(ep.startAt));
+    // 治った日がわからないときは終わりを「不明」にする(日数も出せない)
+    if (!ep.endAt) return `${from}〜不明`;
+    const to = jpDate(localDateKey(ep.endAt));
+    return `${from}〜${to}(${ep.durationDays}日間)`;
   }
   return null;
 }

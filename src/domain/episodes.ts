@@ -26,8 +26,8 @@ export interface Episode {
 }
 
 function byAtAsc(a: Checkin, b: Checkin): number {
-  if (a.at < b.at) return -1;
-  if (a.at > b.at) return 1;
+  const diff = new Date(a.at).getTime() - new Date(b.at).getTime();
+  if (diff) return diff;
   return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
 }
 
@@ -84,7 +84,8 @@ export function deriveEpisodes(issue: Issue): Episode[] {
         opened += 1;
       }
       current.checkins.push(c);
-      closeAndPush(current, c.at);
+      current.closed = true;
+      closeAndPush(current, c.resolvedDateUnknown ? null : c.at);
       current = null;
     } else {
       // 経過(worse/same/better)。開いていなければ暗黙の山を開く。
@@ -148,7 +149,7 @@ export interface DiseaseSpan {
   /** 最初の発症日(ローカル YYYY-MM-DD) */
   fromKey: string;
   /** 通算期間の通日(両端含む) */
-  days: number;
+  days: number | null;
   /** 治って再発を繰り返したか(エピソードが複数)。true なら「断続的」 */
   intermittent: boolean;
   /** これまでのエピソード数 */
@@ -168,7 +169,7 @@ export function diseaseSpan(
     : todayKey(now);
   return {
     fromKey,
-    days: daysBetween(fromKey, toKey) + 1,
+    days: last.closed && !last.endAt ? null : daysBetween(fromKey, toKey) + 1,
     intermittent: eps.length > 1,
     episodeCount: eps.length,
   };

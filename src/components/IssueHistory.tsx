@@ -124,8 +124,10 @@ export function IssueHistory({
             <div key={ep.index}>
               <p className="text-foreground mb-1.5 text-xs font-semibold">
                 {ep.kind === "initial" ? "発症" : "再発"} {jpDate(startKey)}
-                {ep.closed && endKey
-                  ? ` 〜 治癒 ${jpDate(endKey)}(${ep.durationDays}日間)`
+                {ep.closed
+                  ? endKey
+                    ? ` 〜 治癒 ${jpDate(endKey)}(${ep.durationDays}日間)`
+                    : " 〜 不明"
                   : dayNow !== null
                     ? ` 〜 継続中(${dayNow}日目)`
                     : ""}

@@ -32,7 +32,7 @@ export function SymptomCard({
   issue: Issue;
   now: Date;
   onRecord: (status: MagnitudeStatus | "memo", note: string) => void;
-  onResolve: (atISO: string) => void;
+  onResolve: (atISO: string | null) => void;
   onEditCheckin: (checkinId: string, patch: Partial<Omit<Checkin, "id">>) => void;
   onDeleteCheckin: (checkinId: string) => void;
   onDeleteIssue: () => void;
@@ -137,6 +137,10 @@ export function SymptomCard({
             now={now}
             onConfirm={(at) => {
               onResolve(at);
+              celebrate();
+            }}
+            onConfirmUnknown={() => {
+              onResolve(null);
               celebrate();
             }}
             trigger={

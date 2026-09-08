@@ -48,6 +48,8 @@ export interface Checkin {
   id: string;
   /** 記録した瞬間(ISO タイムスタンプ)。「その日」はこの時刻のローカル日付で判定する */
   at: string;
+  /** 治癒日不明。at は経過の並び順のための値で、治癒日として使わない。 */
+  resolvedDateUnknown?: boolean;
   status: Status;
   /** どの状態にも付けられる自由記述(空可) */
   note: string;

@@ -4,6 +4,7 @@ import {
   addIssue,
   createIssue,
   emptyAppData,
+  resolveIssue,
   upsertMood,
 } from "@/domain/operations";
 import { backupFilename, parseBackup } from "@/lib/backup";
@@ -35,6 +36,16 @@ describe("parseBackup", () => {
     const data = sample();
     const text = JSON.stringify(data);
     expect(parseBackup(text)).toEqual(data);
+  });
+
+  it("治った(日付不明)の印をバックアップ往復で保つ", () => {
+    let d = emptyAppData();
+    let issue = createIssue("頭痛", "2026-08-03T09:00:00", "初期メモ");
+    issue = resolveIssue(issue, null);
+    d = addIssue(d, issue);
+    const restored = parseBackup(JSON.stringify(d));
+    expect(restored).toEqual(d);
+    expect(restored.issues[0].checkins.at(-1)?.resolvedDateUnknown).toBe(true);
   });
 
   it("version 欠落は既定で補う", () => {

@@ -74,17 +74,22 @@ function resolvedLine(issue: Issue): string {
   const eps = deriveEpisodes(issue);
   for (let i = eps.length - 1; i >= 0; i--) {
     const ep = eps[i];
-    if (ep.closed && ep.endAt) {
-      return `・${issue.name}  ${jpDate(localDateKey(ep.startAt))}〜${jpDate(
-        localDateKey(ep.endAt),
-      )}(${ep.durationDays}日間)`;
-    }
+    if (!ep.closed) continue;
+    const from = jpDate(localDateKey(ep.startAt));
+    // 治った日がわからないときは終わりを「不明」にする(日数も出せない)
+    if (!ep.endAt) return `・${issue.name}  ${from}〜不明`;
+    return `・${issue.name}  ${from}〜${jpDate(
+      localDateKey(ep.endAt),
+    )}(${ep.durationDays}日間)`;
   }
   return `・${issue.name}`;
 }
 
 /** 通院用のプレーンテキストを生成する */
-export function buildVisitExport(data: AppData, now: Date = new Date()): string {
+export function buildVisitExport(
+  data: AppData,
+  now: Date = new Date(),
+): string {
   const active = data.issues
     .filter((i) => deriveStatus(i) === "active")
     .sort(byLatestDesc);
@@ -99,7 +104,9 @@ export function buildVisitExport(data: AppData, now: Date = new Date()): string 
 
   out.push("■ 続いている症状");
   if (active.length === 0) out.push("・なし");
-  else for (const i of active) out.push(...activeLines(i, now, data.settings.birthDate));
+  else
+    for (const i of active)
+      out.push(...activeLines(i, now, data.settings.birthDate));
   out.push("");
 
   out.push("■ 最近治った症状");

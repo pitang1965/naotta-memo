@@ -56,7 +56,25 @@ export function addCheckin(
 }
 
 /** 治癒を確定する。治った日(at)は既定=今、過去日も指定可 */
-export function resolveIssue(issue: Issue, at: string = nowIso()): Issue {
+export function resolveIssue(
+  issue: Issue,
+  at: string | null = nowIso(),
+): Issue {
+  if (at === null) {
+    const latest = Math.max(
+      ...issue.checkins.map((c) => new Date(c.at).getTime()),
+    );
+    const entry: Checkin = {
+      id: newId(),
+      at: new Date(
+        Number.isFinite(latest) ? latest + 1 : Date.now(),
+      ).toISOString(),
+      status: "resolved",
+      note: "",
+      resolvedDateUnknown: true,
+    };
+    return { ...issue, checkins: [...issue.checkins, entry] };
+  }
   return addCheckin(issue, "resolved", { at });
 }
 

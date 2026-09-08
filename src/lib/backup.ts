@@ -18,6 +18,7 @@ const PressureSchema = z
 const CheckinSchema = z.object({
   id: z.string(),
   at: z.string(),
+  resolvedDateUnknown: z.boolean().optional(),
   status: z.enum([
     "worse",
     "same",

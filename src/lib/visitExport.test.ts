@@ -46,7 +46,9 @@ describe("buildVisitExport", () => {
 
   it("続いている症状は再発パターンと現エピソードの日数を要約する", () => {
     expect(text).toContain("・頭痛");
-    expect(text).toContain("2026年8月3日から断続的(2回)。今回は8月14日から4日目。");
+    expect(text).toContain(
+      "2026年8月3日から断続的(2回)。今回は8月14日から4日目。",
+    );
   });
 
   it("現エピソードの直近チェックインを M/D 状態[・メモ] で出す", () => {
@@ -56,6 +58,13 @@ describe("buildVisitExport", () => {
 
   it("治った症状は期間つきで出す", () => {
     expect(text).toContain("・風邪  8月1日〜8月5日(5日間)");
+  });
+
+  it("治った日がわからない症状は終わりを『不明』にする", () => {
+    let issue = createIssue("胃痛", "2026-08-01T09:00:00", "");
+    issue = resolveIssue(issue, null);
+    const data = addIssue(emptyAppData(), issue);
+    expect(buildVisitExport(data, now)).toContain("・胃痛  8月1日〜不明");
   });
 
   it("空データでも見出しと『なし』を出す", () => {

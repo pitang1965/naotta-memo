@@ -16,6 +16,7 @@ import { DateChoice } from "@/components/DateChoice";
 /**
  * 日付を選んで確定する小さなダイアログ。治癒日・再発日など「いつ起きたか」を選ぶ用途。
  * trigger をそのまま開くボタンにする。onConfirm には選んだ日の ISO を渡す。
+ * onConfirmUnknown を渡すと [わからない] が選べるようになり、選ばれていればそちらを呼ぶ。
  */
 export function EventDateDialog({
   title,
@@ -24,6 +25,7 @@ export function EventDateDialog({
   trigger,
   now,
   onConfirm,
+  onConfirmUnknown,
 }: {
   title: string;
   description?: string;
@@ -31,12 +33,15 @@ export function EventDateDialog({
   trigger: ReactNode;
   now: Date;
   onConfirm: (atISO: string) => void;
+  onConfirmUnknown?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [key, setKey] = useState(() => todayKey(now));
+  const [unknown, setUnknown] = useState(false);
 
   const confirm = () => {
-    onConfirm(atForDateKey(key, now));
+    if (unknown && onConfirmUnknown) onConfirmUnknown();
+    else onConfirm(atForDateKey(key, now));
     setOpen(false);
   };
 
@@ -45,7 +50,10 @@ export function EventDateDialog({
       open={open}
       onOpenChange={(o) => {
         setOpen(o);
-        if (o) setKey(todayKey(now));
+        if (o) {
+          setKey(todayKey(now));
+          setUnknown(false);
+        }
       }}
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -54,12 +62,23 @@ export function EventDateDialog({
           <DialogTitle className="font-serif">{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
-        <DateChoice value={key} onChange={setKey} now={now} />
+        <DateChoice
+          value={key}
+          onChange={(k) => {
+            setKey(k);
+            setUnknown(false);
+          }}
+          now={now}
+          unknown={unknown}
+          onUnknown={onConfirmUnknown ? () => setUnknown(true) : undefined}
+        />
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="ghost">キャンセル</Button>
           </DialogClose>
-          <Button onClick={confirm}>{confirmLabel}</Button>
+          <Button onClick={confirm} disabled={!unknown && !key}>
+            {confirmLabel}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
