@@ -10,6 +10,7 @@ import {
   type Status,
 } from "./types";
 import { localDateKey } from "./time";
+import { sortedCheckins } from "./episodes";
 
 function newId(): string {
   // ブラウザ・Node22 双方で利用可能。
@@ -154,6 +155,48 @@ export function replaceIssue(data: AppData, issue: Issue): AppData {
 
 export function removeIssue(data: AppData, issueId: string): AppData {
   return { ...data, issues: data.issues.filter((i) => i.id !== issueId) };
+}
+
+/** 選んだ症状の全記録を統合する。最初以外の発症は再発として残す。 */
+export function mergeIssues(
+  data: AppData,
+  issueIds: string[],
+  name: string,
+): AppData {
+  const ids = new Set(issueIds);
+  const selected = data.issues.filter((issue) => ids.has(issue.id));
+  if (selected.length < 2 || selected.length !== ids.size || !name.trim()) {
+    return data;
+  }
+  let hasOnset = false;
+  const merged: Issue = {
+    id: selected[0].id,
+    name: name.trim(),
+    checkins: sortedCheckins({
+      ...selected[0],
+      checkins: selected.flatMap((issue) => issue.checkins),
+    }).map((checkin) => {
+      if (checkin.status !== "start" && checkin.status !== "relapse") {
+        return checkin;
+      }
+      const status = hasOnset ? "relapse" : checkin.status;
+      hasOnset = true;
+      return { ...checkin, status };
+    }),
+  };
+  // 追跡中の症状が一つでもあれば、統合後も表示する。
+  if (selected.every((issue) => issue.dismissedAt)) {
+    merged.dismissedAt = selected
+      .map((issue) => issue.dismissedAt!)
+      .sort()
+      .at(-1);
+  }
+  return {
+    ...data,
+    issues: data.issues.flatMap((issue) =>
+      issue.id === merged.id ? [merged] : ids.has(issue.id) ? [] : [issue],
+    ),
+  };
 }
 
 /** その日のデイリームードを記録/更新(1日1件・上書き) */

@@ -8,6 +8,7 @@ import {
   deleteCheckin,
   deleteCheckinsOnDate,
   editCheckin,
+  mergeIssues,
   removeIssue,
   renameIssue,
   replaceIssue,
@@ -16,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { IssueHistory } from "@/components/IssueHistory";
+import { MergeIssues } from "@/components/MergeIssues";
 
 export const Route = createFileRoute("/history")({
   component: History,
@@ -26,6 +28,7 @@ function History() {
   const [q, setQ] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [mergeMessage, setMergeMessage] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
   const now = new Date();
 
@@ -154,6 +157,27 @@ function History() {
           ))}
         </div>
       </div>
+
+      {!invalidRange && (
+        <MergeIssues
+          key={JSON.stringify([q, from, to])}
+          issues={issues.map(({ issue }) => issue)}
+          onMerge={(ids, name) => {
+            update((d) => mergeIssues(d, ids, name));
+            setMergeMessage(
+              `${ids.length}件の症状を「${name.trim()}」にまとめました。`,
+            );
+            setQ("");
+            setFrom("");
+            setTo("");
+          }}
+        />
+      )}
+      {mergeMessage && (
+        <p role="status" className="text-sm">
+          {mergeMessage}
+        </p>
+      )}
 
       {invalidRange ? (
         <p
