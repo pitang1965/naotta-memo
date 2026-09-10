@@ -13,6 +13,7 @@ import {
   editCheckin,
   relapseIssue,
   undismissIssue,
+  updateSettings,
   removeIssue,
   replaceIssue,
   resolveIssue,
@@ -22,6 +23,7 @@ import { jpDate } from "@/lib/labels";
 import { useAppData } from "@/hooks/useAppData";
 import { BrandMark } from "@/components/BrandMark";
 import { MoodPicker } from "@/components/MoodPicker";
+import { InstallHint } from "@/components/InstallHint";
 import { SymptomCard } from "@/components/SymptomCard";
 import { AddSymptom } from "@/components/AddSymptom";
 import { RelapseList } from "@/components/RelapseList";
@@ -61,7 +63,8 @@ function Home() {
     );
   }
 
-  // 「気にしない」は治癒でも継続でもない第三の置き場。どちらの一覧にも混ぜない。
+  // 「気にしない」は症状の状態ではなく、追うのをやめたという本人の態度(→ CONTEXT)。
+  // 症状自体は active のままなので、治った一覧には入れず、今日の一覧からだけ外して別枠に置く。
   const dismissed = data.issues.filter((i) => i.dismissedAt);
   const tracked = data.issues.filter((i) => !i.dismissedAt);
   const active = tracked.filter((i) => deriveStatus(i) === "active");
@@ -95,6 +98,15 @@ function Home() {
         onPick={(m) => update((d) => upsertMood(d, today, m))}
         onClear={() => update((d) => clearMood(d, today))}
       />
+
+      {/* 価値が伝わった後(記録が1件以上)にだけ、ホーム画面への追加を勧める。 */}
+      {data.issues.length > 0 && !data.settings.installHintDismissed && (
+        <InstallHint
+          onDismiss={() =>
+            update((d) => updateSettings(d, { installHintDismissed: true }))
+          }
+        />
+      )}
 
       <section className="flex flex-col gap-3">
         <h2 className="text-muted-foreground text-sm font-medium">

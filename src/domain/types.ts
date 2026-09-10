@@ -87,6 +87,8 @@ export interface Settings {
   historySortOrder?: HistorySortOrder;
   /** 「◯歳から」の表現に使う任意設定。ローカル YYYY-MM-DD(端末内のみ保存) */
   birthDate?: string;
+  /** 今日タブの「ホーム画面に追加」の案内を閉じたか。閉じても設定タブからは追加できる */
+  installHintDismissed?: boolean;
 }
 
 export const APP_DATA_VERSION = 1;

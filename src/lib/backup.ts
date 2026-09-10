@@ -48,6 +48,7 @@ const SettingsSchema = z
   .object({
     birthDate: z.string().optional(),
     historySortOrder: z.enum(["newest", "oldest"]).optional(),
+    installHintDismissed: z.boolean().optional(),
   })
   .default({});
 
