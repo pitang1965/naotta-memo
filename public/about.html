@@ -1,5 +1,29 @@
-<title>なおったメモ</title>
+<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>なおったメモ — 症状の「はじまり」から「治った」まで</title>
+<meta name="description" content="症状のはじまりから「治った」まで記録する、個人用の体調メモ。通院のとき、まとめてそのまま見せられる。" />
+<link rel="canonical" href="https://naotta.over40web.club/about" />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<meta name="theme-color" content="#F2F0EA" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="なおったメモ" />
+<meta property="og:locale" content="ja_JP" />
+<meta property="og:title" content="なおったメモ" />
+<meta property="og:description" content="症状のはじまりから「治った」まで記録する、個人用の体調メモ。通院のとき、まとめてそのまま見せられる。" />
+<meta property="og:url" content="https://naotta.over40web.club/about" />
+<meta property="og:image" content="https://naotta.over40web.club/og.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="なおったメモ — 症状のはじまりから「治った」まで記録する、個人用の体調メモ" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="なおったメモ" />
+<meta name="twitter:description" content="症状のはじまりから「治った」まで記録する、個人用の体調メモ。通院のとき、まとめてそのまま見せられる。" />
+<meta name="twitter:image" content="https://naotta.over40web.club/og.png" />
+<meta name="twitter:image:alt" content="なおったメモ — 症状のはじまりから「治った」まで記録する、個人用の体調メモ" />
 <style>
   :root {
     /* 和紙・カルテ帳(明るい昼のカルテ) */
@@ -160,8 +184,11 @@
     letter-spacing: .02em;
     box-shadow: var(--shadow);
     text-decoration: none;
-    cursor: default;
+    cursor: pointer;
+    transition: filter .15s ease, transform .15s ease;
   }
+  .btn:hover { filter: brightness(1.06); }
+  .btn:active { transform: translateY(1px); }
   :root[data-theme="dark"] .btn,
   :root:not([data-theme="light"]) .btn { color: #14150F; }
   @media (prefers-color-scheme: light) {
@@ -404,6 +431,38 @@
     letter-spacing: .06em;
   }
   footer a { color: var(--green-ink); }
+  footer .foot-links { display: inline-block; margin-top: 8px; }
+  footer .foot-links a { text-decoration: none; }
+  footer .foot-links a:hover { text-decoration: underline; }
+
+  /* ── はじめかた(QR とインストール手順) ── */
+  .start {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 24px 22px;
+    box-shadow: var(--shadow);
+  }
+  .qr { text-align: center; flex: 0 0 auto; }
+  /* QR は自前の明るい地色を焼き込んである(ダーク配色でも読めるように)。
+     角丸だけ足して、地色は画像側のものをそのまま見せる。 */
+  .qr img { display: block; width: 168px; height: 168px; border-radius: 8px; }
+  .qr-cap { margin: 10px 0 0; font-size: 12.5px; color: var(--muted); }
+  .steps { flex: 1 1 260px; min-width: 240px; }
+  .steps-lead { margin: 0 0 14px; font-size: 14.5px; line-height: 1.95; }
+  .steps ul { margin: 0 0 18px; padding-left: 0; list-style: none; }
+  .steps li {
+    padding: 9px 0;
+    border-top: 1px solid var(--rule-soft);
+    font-size: 14px;
+    line-height: 1.9;
+  }
+  .steps li b { font-family: var(--font-mincho); }
+  .steps .os { color: var(--green-ink); }
 </style>
 
 <div class="wrap">
@@ -424,7 +483,8 @@
     </p>
 
     <div class="cta">
-      <span class="note">準備中 ・ 個人用・端末内保存の PWA</span>
+      <a class="btn" href="/">はじめる</a>
+      <span class="note">登録不要 ・ 記録は端末の中だけ ・ インストールできる PWA</span>
     </div>
 
     <div class="track" role="img" aria-label="症状の経過タイムライン。発症から悪化・改善を経て、治ったとして朱印で確定するまで。">
@@ -451,7 +511,7 @@
       </div>
       <div class="card verm">
         <div class="ttl"><span class="idx">02</span>再発も、ひと続きで</div>
-        <p>ぶり返したら、治った症状の一覧から選ぶだけ。<span class="m">同じ症状として繋がり、「今月3回目・毎回2〜3日」まで見える。</span></p>
+        <p>ぶり返したら、治った症状の一覧から選ぶだけ。<span class="m">同じ症状として繋がり、「2年前から断続的に3回・今回は4日目」と通算で見える。</span></p>
       </div>
       <div class="card">
         <div class="ttl"><span class="idx">03</span>ワンタップの経過</div>
@@ -517,10 +577,41 @@
     </div>
   </section>
 
+  <section class="sec">
+    <div class="sec-h"><h2>はじめかた</h2><span class="rule"></span></div>
+    <div class="start">
+      <div class="qr">
+        <img
+          src="/qr.svg"
+          width="168"
+          height="168"
+          alt="このページ(https://naotta.over40web.club/about)を開く QR コード"
+        />
+        <p class="qr-cap">スマホのカメラで<br />読み取れます</p>
+      </div>
+      <div class="steps">
+        <p class="steps-lead">
+          ブラウザでそのまま使えます。<b>ホーム画面に追加</b>しておくと、ワンタップで開けて、
+          電波が無いところでも記録できます。
+        </p>
+        <ul>
+          <li><b class="os">iPhone・iPad</b> — Safari で開いて、下の「共有」から<b>「ホーム画面に追加」</b></li>
+          <li><b class="os">Android</b> — Chrome のメニューから<b>「アプリをインストール」</b>。アプリの中にも案内が出ます</li>
+        </ul>
+        <a class="btn" href="/">はじめる</a>
+      </div>
+    </div>
+  </section>
+
   <footer>
-    <span class="prov">暫定ページ</span><br />
-    「なおったメモ」の暫定ランディングページです。仕様は検討中のため、内容・画面は変わります。<br />
-    個人用 ・ 健康情報は端末内(localStorage)に保存
+    <span class="prov">なおったメモ</span><br />
+    ピータンが個人で作って運営しています。<br />
+    症状の記録はあなたの端末の中(localStorage)にだけ保存され、運営者のサーバーへ送られることはありません。<br />
+    <span class="foot-links">
+      <a href="/privacy">プライバシーポリシー</a> ・
+      <a href="/terms">利用規約</a> ・
+      <a href="mailto:info@nafuda.me">info@nafuda.me</a>
+    </span>
   </footer>
 
 </div>

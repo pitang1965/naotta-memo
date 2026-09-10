@@ -5,7 +5,7 @@
 
 - ドメインの用語集: [CONTEXT.md](./CONTEXT.md)
 - 設計判断の記録: [docs/adr/](./docs/adr/)
-- 暫定ランディングページ: `landing.html`
+- 紹介ページ(共有・QR の着地先): `public/about.html` → <https://naotta.over40web.club/about>
 - 本番: https://naotta.over40web.club
 
 ## 技術スタック(ADR 0005)
@@ -41,13 +41,28 @@ pnpm dev
 
 `deploy` ではなく `deploy:cf` なのは、`pnpm deploy` が pnpm の組み込みコマンドで衝突するため。
 
+## 紹介ページ
+
+アプリはルート `/`、紹介ページは静的 HTML 1 枚で `/about`(→ [ADR 0007](./docs/adr/0007-landing-page-static-separate-path.md))。
+共有ボタンと QR が指すのは常に `/about` で、アプリ本体ではない。まだ使っていない人が
+説明のない空の記録アプリに着地しないため。
+
+`public/` に置いてあるので、ビルドが必ず拾って必ず配信される。React ルートにはしない
+(プリレンダーは `/index.html` だけなので、Reactルートにすると初見の訪問者がバンドルを
+待つことになる)。
+
 ## アイコンと OG 画像
 
-`public/` のアイコン・`og.png`・ショートカット用アイコンは手書きではなく
+`public/` のアイコン・`og.png`・ショートカット用アイコン・`qr.svg` は手書きではなく
 [scripts/icon/](./scripts/icon/) で生成し、成果物をコミットしている。
 図形の出どころは `scripts/icon/shapes.mjs` ひとつだけで、
 `build.mjs`(SVG と `BrandMark.tsx`)/ `raster.mjs`(PNG)/ `og.mjs`(OG・ショートカット)が
 書き出し先ごとにそれを包む。`pnpm icons` で全部作り直せる。
+
+`qr.mjs` だけは図形ではなく `/about` の QR コードを焼く(`public/qr.svg`)。URL は固定なので
+実行時には作らない——アプリのバンドルは 1 バイトも増えない。誤り訂正は M、ロゴは載せない。
+モジュールを粗いまま保って、遠く・斜めからでも読み取れることを優先している。
+ダーク配色の紹介ページで沈まないよう、透過にせず明るい地色を焼き込んである。
 
 OG 画像だけは游明朝を直接読むので、**Windows でしか焼き直せない**。
 ビルドには要らない(成果物をコミットしてあるため)ので、CI では走らせない。
