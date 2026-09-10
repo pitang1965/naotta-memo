@@ -112,9 +112,17 @@ function Home() {
         <h2 className="text-muted-foreground text-sm font-medium">
           続いている症状
         </h2>
+        {/* 登録ボタンは一覧の下ではなく、見出しの直下に置く。下に置くと位置が症状の
+            数で動き、増えるほど画面外に出てしまう(CSV 取り込みの直後がとくに顕著)。 */}
+        <AddSymptom
+          now={now}
+          onAdd={(name, note, at) =>
+            update((d) => addIssue(d, createIssue(name, at, note)))
+          }
+        />
         {active.length === 0 ? (
           <p className="text-muted-foreground bg-card border-border rounded-lg border border-dashed px-3 py-4 text-center text-sm">
-            いまはありません。不調があれば、下から登録できます。
+            いまはありません。不調があれば、上のボタンから登録できます。
           </p>
         ) : (
           active.map((issue) => (
@@ -139,12 +147,6 @@ function Home() {
             />
           ))
         )}
-        <AddSymptom
-          now={now}
-          onAdd={(name, note, at) =>
-            update((d) => addIssue(d, createIssue(name, at, note)))
-          }
-        />
       </section>
 
       <RelapseList
