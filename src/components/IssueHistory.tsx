@@ -58,7 +58,8 @@ export function IssueHistory({
   onRename: (name: string) => void;
   onDeleteIssue: () => void;
 }) {
-  // 「気にしない」は治癒でも継続でもないので、バッジは3値
+  // 「気にしない」は状態ではなく態度(→ CONTEXT)。モデルは active/resolved の2値のままで、
+  // バッジだけ表示の都合で3つに割る。
   const active = deriveStatus(issue) === "active";
   const badge = issue.dismissedAt
     ? "気にしない"
