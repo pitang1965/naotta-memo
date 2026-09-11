@@ -34,12 +34,9 @@ export function AddSymptom({
   };
 
   if (!open) {
+    // このアプリで一番やってほしい操作なので、控えめな枠線ボタンではなく塗りで出す。
     return (
-      <Button
-        variant="outline"
-        className="w-full"
-        onClick={() => setOpen(true)}
-      >
+      <Button className="w-full" onClick={() => setOpen(true)}>
         <Plus />
         症状を登録
       </Button>
