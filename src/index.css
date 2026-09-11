@@ -34,48 +34,55 @@
 /*
   なおったメモの配色(和紙・カルテ帳)。shadcn の neutral トークンを
   washi/緑基調に寄せている。緑(改善・治癒)を primary に。
+
+  和紙は「灰色の紙」ではなく「陽の当たるクリーム色の紙」として置く。
+  中間色の彩度を 0 近くまで落とすと、落ち着きではなく曇りに見えてしまう
+  ため、紙にも罫線にも黄み(hue 90 付近)をわずかに残す。緑も同じ理由で
+  くすませない——毎日ひらく体調アプリなので、明るいほうが心地よい。
+  明度は据え置き、彩度だけを上げているので、文字と背景のコントラストは
+  すべて WCAG AA(本文 4.5:1)を満たしたまま。
 */
 :root {
   --radius: 0.625rem;
-  --background: oklch(0.955 0.006 95);      /* 和紙 #F2F0EA 相当 */
-  --foreground: oklch(0.25 0.01 130);        /* 墨 #2B2E28 相当 */
-  --card: oklch(0.985 0.005 95);             /* 札 #FCFBF7 相当 */
-  --card-foreground: oklch(0.25 0.01 130);
-  --popover: oklch(0.985 0.005 95);
-  --popover-foreground: oklch(0.25 0.01 130);
-  --primary: oklch(0.55 0.06 150);           /* 改善・治癒の緑 #4E8259 相当 */
-  --primary-foreground: oklch(0.985 0.005 95);
-  --secondary: oklch(0.92 0.008 95);
-  --secondary-foreground: oklch(0.3 0.01 130);
-  --muted: oklch(0.92 0.008 95);
-  --muted-foreground: oklch(0.5 0.01 120);   /* 補助テキスト #6B6F64 相当 */
-  --accent: oklch(0.92 0.01 95);
-  --accent-foreground: oklch(0.3 0.01 130);
-  --destructive: oklch(0.55 0.13 30);        /* 悪化の朱 #B5533F 相当 */
-  --border: oklch(0.86 0.012 90);            /* 罫線 #DAD4C4 相当 */
-  --input: oklch(0.86 0.012 90);
-  --ring: oklch(0.55 0.06 150);
+  --background: oklch(0.97 0.016 92);        /* 和紙 #F9F5E9 相当 */
+  --foreground: oklch(0.27 0.018 140);       /* 墨 #222920 相当 */
+  --card: oklch(0.99 0.008 92);              /* 札 #FEFCF6 相当 */
+  --card-foreground: oklch(0.27 0.018 140);
+  --popover: oklch(0.99 0.008 92);
+  --popover-foreground: oklch(0.27 0.018 140);
+  --primary: oklch(0.535 0.115 148);         /* 改善・治癒の緑 #367F45 相当 */
+  --primary-foreground: oklch(0.99 0.008 92);
+  --secondary: oklch(0.93 0.018 92);
+  --secondary-foreground: oklch(0.32 0.016 140);
+  --muted: oklch(0.93 0.018 92);
+  --muted-foreground: oklch(0.505 0.018 120); /* 補助テキスト #63665B 相当 */
+  --accent: oklch(0.93 0.025 120);           /* hover は緑寄りの若草 */
+  --accent-foreground: oklch(0.32 0.016 140);
+  --destructive: oklch(0.56 0.15 30);        /* 悪化の朱 #BC4A3C 相当 */
+  --border: oklch(0.88 0.02 90);             /* 罫線 #DCD7C9 相当 */
+  --input: oklch(0.88 0.02 90);
+  --ring: oklch(0.535 0.115 148);
 }
 
 .dark {
-  --background: oklch(0.2 0.008 110);
-  --foreground: oklch(0.92 0.01 95);
-  --card: oklch(0.24 0.008 110);
-  --card-foreground: oklch(0.92 0.01 95);
-  --popover: oklch(0.24 0.008 110);
-  --popover-foreground: oklch(0.92 0.01 95);
-  --primary: oklch(0.72 0.07 150);
-  --primary-foreground: oklch(0.18 0.01 110);
-  --secondary: oklch(0.3 0.008 110);
-  --secondary-foreground: oklch(0.92 0.01 95);
-  --muted: oklch(0.3 0.008 110);
-  --muted-foreground: oklch(0.72 0.01 100);
-  --accent: oklch(0.32 0.01 110);
-  --accent-foreground: oklch(0.92 0.01 95);
-  --destructive: oklch(0.68 0.13 32);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.72 0.07 150);
+  --background: oklch(0.235 0.014 110);
+  --foreground: oklch(0.93 0.014 95);
+  --card: oklch(0.275 0.014 110);
+  --card-foreground: oklch(0.93 0.014 95);
+  --popover: oklch(0.275 0.014 110);
+  --popover-foreground: oklch(0.93 0.014 95);
+  --primary: oklch(0.76 0.12 150);
+  --primary-foreground: oklch(0.2 0.014 110);
+  --secondary: oklch(0.33 0.014 110);
+  --secondary-foreground: oklch(0.93 0.014 95);
+  --muted: oklch(0.33 0.014 110);
+  --muted-foreground: oklch(0.75 0.016 100);
+  --accent: oklch(0.35 0.02 115);
+  --accent-foreground: oklch(0.93 0.014 95);
+  --destructive: oklch(0.7 0.15 32);
+  --border: oklch(1 0 0 / 16%);
+  --input: oklch(1 0 0 / 18%);
+  --ring: oklch(0.76 0.12 150);
 }
 
 @layer base {

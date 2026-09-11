@@ -84,7 +84,7 @@ export const Route = createRootRoute({
     meta: [
       { title: SITE_NAME },
       { name: "description", content: SITE_DESCRIPTION },
-      { name: "theme-color", content: "#F2F0EA" },
+      { name: "theme-color", content: "#F9F5E9" },
       // .dark トークンは定義してあるが適用する導線が無く、UI は常に明るい。
       // 宣言しておかないと iOS が勝手に暗転させ、和紙の地色が濁る。
       { name: "color-scheme", content: "light" },
