@@ -2,17 +2,11 @@ import { useState } from "react";
 import { Pencil, Trash2, X } from "lucide-react";
 import type { AppData, Mood } from "@/domain/types";
 import { recentDayKeys } from "@/domain/time";
-import { MOOD_LABEL, MOOD_OPTIONS, MOOD_SYMBOL, jpDate } from "@/lib/labels";
+import { MOOD_LABEL, MOOD_OPTIONS, jpDate } from "@/lib/labels";
+import { MOOD_COLOR } from "@/lib/mood";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-
-// 絶好調 → つらい を、緑→黄土→赤 の重症度ランプで。不調の連なりが赤で見える。
-const MOOD_COLOR: Record<Mood, string> = {
-  great: "bg-primary",
-  ok: "bg-primary/45",
-  meh: "bg-amber-400 dark:bg-amber-500/80",
-  bad: "bg-destructive",
-};
+import { MoodFace } from "@/components/MoodFace";
 
 const RANGE_OPTIONS: { label: string; days: number }[] = [
   { label: "2週間", days: 14 },
@@ -34,7 +28,8 @@ export function MoodReview({
   const [editing, setEditing] = useState<string | null>(null);
   const [rangeDays, setRangeDays] = useState(14);
   const days = recentDayKeys(rangeDays, now);
-  const gap = rangeDays <= 14 ? "gap-1" : rangeDays <= 30 ? "gap-0.5" : "gap-px";
+  const gap =
+    rangeDays <= 14 ? "gap-1" : rangeDays <= 30 ? "gap-0.5" : "gap-px";
   const byDate = new Map(data.daily.map((d) => [d.date, d.mood]));
   const recorded = [...data.daily].sort((a, b) => (a.date < b.date ? 1 : -1));
   const editingMood = editing !== null ? byDate.get(editing) : undefined;
@@ -112,13 +107,13 @@ export function MoodReview({
                     setEditing(null);
                   }}
                   className={cn(
-                    "flex flex-col items-center gap-1 rounded-lg border py-2 transition-colors",
+                    "text-foreground flex flex-col items-center gap-1 rounded-lg border py-2 transition-colors",
                     editingMood === o.value
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border text-foreground hover:bg-accent",
+                      ? "border-primary bg-primary/10 font-medium"
+                      : "border-border hover:bg-accent",
                   )}
                 >
-                  <span className="text-lg leading-none">{o.symbol}</span>
+                  <MoodFace mood={o.value} className="size-7" />
                   <span className="text-xs">{o.text}</span>
                 </button>
               ))}
@@ -172,12 +167,8 @@ export function MoodReview({
                 >
                   <span className="tabular-nums">{jpDate(d.date)}</span>
                   <span className="inline-flex items-center gap-2">
-                    <span
-                      className={cn("size-3 rounded-sm", MOOD_COLOR[d.mood])}
-                    />
-                    <span className="font-medium">
-                      {MOOD_SYMBOL[d.mood]} {MOOD_LABEL[d.mood]}
-                    </span>
+                    <MoodFace mood={d.mood} className="size-5" />
+                    <span className="font-medium">{MOOD_LABEL[d.mood]}</span>
                     <Pencil className="text-muted-foreground size-3.5" />
                   </span>
                 </button>

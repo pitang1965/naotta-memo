@@ -24,13 +24,6 @@ export const MOOD_LABEL: Record<Mood, string> = {
   bad: "つらい",
 };
 
-export const MOOD_SYMBOL: Record<Mood, string> = {
-  great: "◎",
-  ok: "○",
-  meh: "△",
-  bad: "✕",
-};
-
 /** ローカル日付キー(YYYY-MM-DD)を「M月D日」表記に */
 export function jpDate(key: string): string {
   const [, m, d] = key.split("-");

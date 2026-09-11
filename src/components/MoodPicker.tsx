@@ -5,6 +5,7 @@ import { MOOD_OPTIONS } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { MoodFace } from "@/components/MoodFace";
 
 /**
  * 今日の調子。タップした瞬間に保存する(1タップで記録できる軽さを守る)。
@@ -74,16 +75,16 @@ export function MoodPicker({
                   onClick={() => {
                     onPick(o.value);
                     setEditing(false);
-                    setMessage(`${o.symbol} ${o.text} として記録しました`);
+                    setMessage(`${o.text} として記録しました`);
                   }}
                   className={cn(
-                    "flex flex-col items-center gap-1 rounded-lg border py-2.5 transition-colors",
+                    "text-foreground flex flex-col items-center gap-1 rounded-lg border py-2.5 transition-colors",
                     active
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border bg-background hover:bg-accent text-foreground",
+                      ? "border-primary bg-primary/10 font-medium"
+                      : "border-border bg-background hover:bg-accent",
                   )}
                 >
-                  <span className="text-lg leading-none">{o.symbol}</span>
+                  <MoodFace mood={o.value} className="size-7" />
                   <span className="text-xs">{o.text}</span>
                 </button>
               );
@@ -91,15 +92,16 @@ export function MoodPicker({
           </div>
         ) : (
           <div className="border-primary/30 bg-primary/5 flex items-center justify-between gap-2 rounded-lg border px-3 py-2.5">
-            <p className="text-sm">
-              <Check
-                aria-hidden
-                className="text-primary mr-1.5 inline size-4 align-[-3px]"
-              />
-              <span className="font-medium">
-                {picked.symbol} {picked.text}
+            <p className="flex items-center gap-2 text-sm">
+              <MoodFace mood={picked.value} className="size-7 shrink-0" />
+              <span>
+                <span className="font-medium">{picked.text}</span>
+                <span className="text-muted-foreground">
+                  {" "}
+                  として記録しました
+                </span>
               </span>
-              <span className="text-muted-foreground"> として記録しました</span>
+              <Check aria-hidden className="text-primary size-4 shrink-0" />
             </p>
             <Button
               variant="outline"
