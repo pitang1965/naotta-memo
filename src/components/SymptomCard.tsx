@@ -10,6 +10,17 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { CheckinRow } from "@/components/CheckinRow";
 import { DeleteIssueButton } from "@/components/DeleteIssueButton";
 import { EventDateDialog } from "@/components/EventDateDialog";
@@ -131,13 +142,29 @@ export function SymptomCard({
 
         <div className="grid grid-cols-3 items-center gap-2 pt-1">
           {/* 治ってはいないが追うのをやめる。治癒の主張はしない */}
-          <button
-            onClick={onDismiss}
-            className="text-muted-foreground hover:text-foreground inline-flex items-center justify-center gap-1.5 text-sm underline-offset-2 hover:underline"
-          >
-            <BellOff className="size-4" />
-            気にしない
-          </button>
+          <AlertDialog>
+            <AlertDialogTrigger className="text-muted-foreground hover:text-foreground inline-flex items-center justify-center gap-1.5 text-sm underline-offset-2 hover:underline">
+              <BellOff className="size-4" />
+              気にしない
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="font-serif">
+                  「{issue.name}」を気にしないことにしますか?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  「続いている症状」から消え、「気にしない症状」に移ります。
+                  「また記録する」をタップすれば、いつでも「続いている症状」に戻せます。
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                <AlertDialogAction onClick={onDismiss}>
+                  気にしないにする
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           <Button
             size="sm"
             disabled={!canSave}
