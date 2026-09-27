@@ -127,28 +127,26 @@ export function SymptomCard({
             rows={2}
             className="min-h-16 bg-card"
           />
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-muted-foreground text-xs">
-              {selected
-                ? `${STATUS_LABEL[selected]} として記録`
-                : "メモ として記録"}
-            </span>
-            <Button size="sm" disabled={!canSave} onClick={save}>
-              <Check />
-              保存
-            </Button>
-          </div>
         </div>
 
-        <div className="flex items-center justify-between gap-2">
+        <div className="grid grid-cols-3 items-center gap-2 pt-1">
           {/* 治ってはいないが追うのをやめる。治癒の主張はしない */}
           <button
             onClick={onDismiss}
-            className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-sm underline-offset-2 hover:underline"
+            className="text-muted-foreground hover:text-foreground inline-flex items-center justify-center gap-1.5 text-sm underline-offset-2 hover:underline"
           >
             <BellOff className="size-4" />
             気にしない
           </button>
+          <Button
+            size="sm"
+            disabled={!canSave}
+            onClick={save}
+            className="justify-self-center"
+          >
+            <Check />
+            メモを保存
+          </Button>
           <EventDateDialog
             title="治った日"
             description="いつ治りましたか?(過去の日も選べます)"
@@ -163,7 +161,7 @@ export function SymptomCard({
               celebrate();
             }}
             trigger={
-              <button className="text-primary inline-flex items-center gap-1.5 text-sm font-medium underline-offset-2 hover:underline">
+              <button className="text-primary inline-flex items-center justify-center gap-1.5 text-sm font-medium underline-offset-2 hover:underline">
                 <span
                   aria-hidden
                   className="border-primary text-primary grid size-5 place-items-center rounded-full border font-serif text-[11px] font-bold"
