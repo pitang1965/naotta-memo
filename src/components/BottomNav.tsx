@@ -19,8 +19,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="border-border bg-card/95 fixed inset-x-0 bottom-0 z-30 border-t backdrop-blur"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      className="border-border bg-card/95 fixed inset-x-0 bottom-0 z-30 border-t pb-[env(safe-area-inset-bottom)] backdrop-blur"
     >
       <ul className="mx-auto flex max-w-md">
         {TABS.map(({ to, label, Icon }) => {

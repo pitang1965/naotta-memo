@@ -191,8 +191,7 @@ export function SymptomCard({
               <button className="text-primary inline-flex items-center justify-center gap-1.5 text-sm font-medium underline-offset-2 hover:underline">
                 <span
                   aria-hidden
-                  className="border-primary text-primary grid size-5 place-items-center rounded-full border font-serif text-[11px] font-bold"
-                  style={{ transform: "rotate(-8deg)" }}
+                  className="border-primary text-primary grid size-5 rotate-[-8deg] place-items-center rounded-full border font-serif text-[11px] font-bold"
                 >
                   治
                 </span>

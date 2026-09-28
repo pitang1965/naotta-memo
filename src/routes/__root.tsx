@@ -45,13 +45,9 @@ function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html lang="ja">
       <head>
-        {/* beforeinstallprompt は React ハイドレーション前に発火するため早期キャプチャ */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__pwaPrompt=e;});",
-          }}
-        />
+        {/* beforeinstallprompt は React ハイドレーション前に発火するため早期キャプチャ。
+            CSP で script-src 'unsafe-inline' を避けるため外部ファイルに分離。 */}
+        <script src="/pwa-install-prompt.js" />
         <meta charSet="utf-8" />
         <meta
           name="viewport"
