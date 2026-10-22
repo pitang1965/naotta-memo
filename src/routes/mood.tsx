@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useAppData } from "@/hooks/useAppData";
 import { clearMood, upsertMood } from "@/domain/operations";
-import { MoodReview } from "@/components/MoodReview";
+import { TrendReview } from "@/components/TrendReview";
 
 export const Route = createFileRoute("/mood")({
   component: MoodPage,
@@ -23,7 +23,7 @@ function MoodPage() {
     body = <p className="text-muted-foreground text-sm">読み込み中…</p>;
   } else {
     body = (
-      <MoodReview
+      <TrendReview
         data={data}
         now={now}
         onSet={(date, mood) => update((d) => upsertMood(d, date, mood))}
@@ -36,7 +36,7 @@ function MoodPage() {
     <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 px-4 pt-6 pb-24">
       <header>
         <h1 className="font-serif text-lg font-semibold tracking-wide">
-          調子の記録
+          推移
         </h1>
       </header>
       {body}

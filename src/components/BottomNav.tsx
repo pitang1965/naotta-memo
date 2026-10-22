@@ -9,7 +9,7 @@ const TABS: {
   Icon: ComponentType<{ className?: string }>;
 }[] = [
   { to: "/", label: "今日", Icon: SquarePen },
-  { to: "/mood", label: "調子", Icon: Activity },
+  { to: "/mood", label: "推移", Icon: Activity },
   { to: "/history", label: "履歴", Icon: History },
   { to: "/settings", label: "設定", Icon: Settings },
 ];

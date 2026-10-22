@@ -38,6 +38,7 @@ export function IssueHistory({
   latestAt,
   recordCount,
   now,
+  defaultOpen = false,
   onEditCheckin,
   onDeleteCheckin,
   onDeleteDay,
@@ -49,6 +50,8 @@ export function IssueHistory({
   latestAt: string;
   recordCount: number;
   now: Date;
+  /** 推移の「履歴で開く」から来たときは開いた状態で見せる */
+  defaultOpen?: boolean;
   onEditCheckin: (
     checkinId: string,
     patch: Partial<Omit<Checkin, "id">>,
@@ -78,7 +81,10 @@ export function IssueHistory({
   };
 
   return (
-    <details className="bg-card border-border group rounded-xl border">
+    <details
+      open={defaultOpen}
+      className="bg-card border-border group rounded-xl border"
+    >
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">

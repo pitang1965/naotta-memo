@@ -19,15 +19,36 @@ import { Button } from "@/components/ui/button";
 import { IssueHistory } from "@/components/IssueHistory";
 import { MergeIssues } from "@/components/MergeIssues";
 
+const DATE_KEY = /^\d{4}-\d{2}-\d{2}$/;
+
+/** 推移の「履歴で開く」から、検索語と期間を受け取る */
+interface HistorySearch {
+  q?: string;
+  from?: string;
+  to?: string;
+}
+
 export const Route = createFileRoute("/history")({
+  validateSearch: (search: Record<string, unknown>): HistorySearch => ({
+    q: typeof search.q === "string" ? search.q : undefined,
+    from:
+      typeof search.from === "string" && DATE_KEY.test(search.from)
+        ? search.from
+        : undefined,
+    to:
+      typeof search.to === "string" && DATE_KEY.test(search.to)
+        ? search.to
+        : undefined,
+  }),
   component: History,
 });
 
 function History() {
   const { data, error, ready, update } = useAppData();
-  const [q, setQ] = useState("");
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const search = Route.useSearch();
+  const [q, setQ] = useState(search.q ?? "");
+  const [from, setFrom] = useState(search.from ?? "");
+  const [to, setTo] = useState(search.to ?? "");
   const [mergeMessage, setMergeMessage] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
   const now = new Date();
@@ -205,6 +226,7 @@ function History() {
               latestAt={latestAt}
               recordCount={recordCount}
               now={now}
+              defaultOpen={!!(search.q || search.from || search.to)}
               onEditCheckin={(cid, patch) =>
                 update((d) => replaceIssue(d, editCheckin(issue, cid, patch)))
               }
