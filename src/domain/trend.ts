@@ -85,10 +85,12 @@ export function trendDays(issue: Issue, dayKeys: string[]): TrendDay[] {
 
 /**
  * 推移に出す症状の帯。期間中にエピソードが続いていたか、エントリがある症状だけを、
- * 最新のエントリが新しい順に並べる(今日タブと同じ順)。気にしない症状も出す。
+ * 最新のエントリが新しい順に並べる(今日タブと同じ順)。気にしない症状は出さない
+ * (経過を追うのをやめた症状なので、見渡す対象からも外す)。
  */
 export function trendRows(issues: Issue[], dayKeys: string[]): TrendRow[] {
   return issues
+    .filter((issue) => !issue.dismissedAt)
     .map((issue) => ({ issue, days: trendDays(issue, dayKeys) }))
     .filter((row) => row.days.some((d) => d.ongoing || d.checkins.length > 0))
     .sort((a, b) => {

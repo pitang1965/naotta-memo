@@ -76,22 +76,8 @@ export function SymptomTrendRow({
 
   return (
     <div>
-      <div className="mb-0.5 flex items-center gap-2 text-xs">
-        <span
-          className={cn(
-            "truncate font-medium",
-            issue.dismissedAt && "text-muted-foreground",
-          )}
-        >
-          {issue.name}
-        </span>
-        {issue.dismissedAt && (
-          <span className="bg-muted text-muted-foreground shrink-0 rounded-full px-1.5 text-[10px]">
-            気にしない
-          </span>
-        )}
-      </div>
-      <div className={cn(issue.dismissedAt && "opacity-50")}>
+      <div className="mb-0.5 truncate text-xs font-medium">{issue.name}</div>
+      <div>
         <div className={cn("flex h-3.5", gap)} aria-hidden="true">
           {days.map((d) => (
             <div

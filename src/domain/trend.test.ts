@@ -92,10 +92,17 @@ describe("trendRows", () => {
     expect(rows.map((r) => r.issue.name)).toEqual(["蕁麻疹", "頭痛"]);
   });
 
-  it("最新のエントリが新しい順。気にしない症状も出す", () => {
-    const older = dismissIssue(createIssue("頭痛", at("2026-09-02")));
+  it("最新のエントリが新しい順", () => {
+    const older = createIssue("頭痛", at("2026-09-02"));
     const newer = createIssue("咳", at("2026-09-05"));
     const rows = trendRows([older, newer], range);
     expect(rows.map((r) => r.issue.name)).toEqual(["咳", "頭痛"]);
+  });
+
+  it("気にしない症状は出さない", () => {
+    const dismissed = dismissIssue(createIssue("頭痛", at("2026-09-02")));
+    const tracked = createIssue("咳", at("2026-09-05"));
+    const rows = trendRows([dismissed, tracked], range);
+    expect(rows.map((r) => r.issue.name)).toEqual(["咳"]);
   });
 });

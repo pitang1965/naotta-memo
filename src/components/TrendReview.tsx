@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pencil, Trash2, X } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 import type { AppData, Mood } from "@/domain/types";
 import { recentDayKeys } from "@/domain/time";
 import { trendRows } from "@/domain/trend";
@@ -44,7 +44,6 @@ export function TrendReview({
   const showIcons = rangeDays <= 14;
   const rows = trendRows(data.issues, days);
   const byDate = new Map(data.daily.map((d) => [d.date, d.mood]));
-  const recorded = [...data.daily].sort((a, b) => (a.date < b.date ? 1 : -1));
   const editingMood = editing !== null ? byDate.get(editing) : undefined;
 
   // 開いておくパネルは1つだけ(調子の編集と症状の詳細を同時に開かない)
@@ -74,6 +73,28 @@ export function TrendReview({
           ))}
         </div>
 
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+            <span className="text-foreground font-medium">調子</span>
+            {MOOD_OPTIONS.map((o) => (
+              <span
+                key={o.value}
+                className="text-muted-foreground inline-flex items-center gap-1.5"
+              >
+                <span
+                  className={cn("size-3 rounded-sm", MOOD_COLOR[o.value])}
+                />
+                {o.symbol} {o.text}
+              </span>
+            ))}
+          </div>
+          {rows.length > 0 && (
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+              <span className="text-foreground font-medium">症状</span>
+              <SymptomLegend />
+            </div>
+          )}
+        </div>
         <div>
           <h2 className="mb-1 text-xs font-medium">調子</h2>
           <div className={cn("flex", gap)}>
@@ -178,60 +199,9 @@ export function TrendReview({
           <span>今日</span>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
-            <span className="text-foreground font-medium">調子</span>
-            {MOOD_OPTIONS.map((o) => (
-              <span
-                key={o.value}
-                className="text-muted-foreground inline-flex items-center gap-1.5"
-              >
-                <span
-                  className={cn("size-3 rounded-sm", MOOD_COLOR[o.value])}
-                />
-                {o.symbol} {o.text}
-              </span>
-            ))}
-          </div>
-          {rows.length > 0 && (
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
-              <span className="text-foreground font-medium">症状</span>
-              <SymptomLegend />
-            </div>
-          )}
-        </div>
         <p className="text-muted-foreground text-xs">
           調子のマスをタップすると、その日の調子を記録・修正できます(過去の日も)。症状のマスをタップすると、その日の記録が見られます。
         </p>
-      </section>
-
-      <section>
-        <h2 className="text-muted-foreground mb-2 text-sm font-medium">
-          調子の記録
-        </h2>
-        {recorded.length === 0 ? (
-          <p className="text-muted-foreground bg-card border-border rounded-lg border border-dashed px-3 py-6 text-center text-sm">
-            まだ「今日の調子」の記録がありません。
-          </p>
-        ) : (
-          <ul className="divide-border flex flex-col divide-y">
-            {recorded.map((d) => (
-              <li key={d.date}>
-                <button
-                  onClick={() => editMood(d.date)}
-                  className="hover:bg-accent/40 flex w-full items-center justify-between rounded-md px-1 py-2.5 text-sm transition-colors"
-                >
-                  <span className="tabular-nums">{jpDate(d.date)}</span>
-                  <span className="inline-flex items-center gap-2">
-                    <MoodFace mood={d.mood} className="size-5" />
-                    <span className="font-medium">{MOOD_LABEL[d.mood]}</span>
-                    <Pencil className="text-muted-foreground size-3.5" />
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
       </section>
     </div>
   );
