@@ -6,7 +6,7 @@ import { localDateKey, localTime } from "@/domain/time";
 import { STATUS_LABEL, jpDate } from "@/lib/labels";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const STATUS_STYLE: Record<MagnitudeStatus, string> = {
   worse: "text-destructive border-destructive/40",
@@ -56,7 +56,10 @@ export function CheckinRow({
           </span>{" "}
           <span className="font-medium">{STATUS_LABEL[checkin.status]}</span>
           {checkin.note && (
-            <span className="text-muted-foreground"> ・{checkin.note}</span>
+            <span className="text-muted-foreground whitespace-pre-wrap">
+              {" "}
+              ・{checkin.note}
+            </span>
           )}
         </p>
         <button
@@ -90,7 +93,7 @@ export function CheckinRow({
           ))}
         </div>
       )}
-      <Input
+      <Textarea
         value={note}
         onChange={(e) => setNote(e.target.value)}
         placeholder="メモ"
