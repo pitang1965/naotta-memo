@@ -18,7 +18,6 @@ function harness(fetch = vi.fn().mockRejectedValue(new TypeError("offline"))) {
     self: {
       addEventListener: (name: string, handler: (event: unknown) => void) =>
         listeners.set(name, handler),
-      skipWaiting: vi.fn(),
     },
     caches: { match, open: vi.fn().mockResolvedValue(cache) },
     fetch,

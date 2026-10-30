@@ -3,7 +3,8 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
-import { existsSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
 
 /**
  * Cloudflare Pages は拡張子なしの /about を public/about.html として返すが、
@@ -32,6 +33,35 @@ function pagesStyleHtmlUrls(): Plugin {
   }
 }
 
+/**
+ * public/sw.js のキャッシュ名に、ビルドしたアセット一覧のハッシュを埋め込む。
+ * sw.js が変わらないと SW は入れ替わらず、新しい版の画面の JS が保存されないままになるため。
+ */
+function versionServiceWorker(): Plugin {
+  const placeholder = '__BUILD_HASH__'
+  return {
+    name: 'naotta-version-service-worker',
+    apply: 'build',
+    writeBundle(options, bundle) {
+      if (this.environment.name !== 'client') return
+      const sw = path.join(options.dir!, 'sw.js')
+      const source = readFileSync(sw, 'utf8')
+      // 埋め込めないまま出すと、更新しても SW が入れ替わらない。黙って出さずにビルドを止める。
+      if (!source.includes(placeholder)) throw new Error(`${sw} に ${placeholder} がありません`)
+      const assets = Object.keys(bundle).filter((f) => f.startsWith('assets/')).sort()
+      const digest = createHash('sha256').update(assets.join(' '))
+      // public/ の画像などは名前にハッシュが付かず SW がキャッシュ優先で返すため、中身も版に含める。
+      const publicDir = path.resolve(import.meta.dirname, 'public')
+      for (const f of readdirSync(publicDir, { recursive: true, encoding: 'utf8' }).sort()) {
+        const file = path.join(publicDir, f)
+        if (statSync(file).isFile()) digest.update(f).update(readFileSync(file))
+      }
+      const hash = digest.digest('hex').slice(0, 8)
+      writeFileSync(sw, source.replace(placeholder, hash))
+    },
+  }
+}
+
 // なおったメモはサーバーデータを持たない(localStorage のみ)。
 // SPA モードでシェルを静的プリレンダーし、Cloudflare Pages に静的配信する(ADR 0005)。
 // SW / _redirects / manifest / favicon は public/ に置き、ビルドで出力へコピーされる。
@@ -43,6 +73,7 @@ export default defineConfig({
   },
   plugins: [
     pagesStyleHtmlUrls(),
+    versionServiceWorker(),
     tailwindcss(),
     tanstackStart({
       spa: { enabled: true, prerender: { outputPath: '/index.html' } },

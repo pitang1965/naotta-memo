@@ -1,11 +1,13 @@
-const ASSET_CACHE = 'naotta-assets-v2'
+// ビルド時に vite.config.ts がアセット一覧のハッシュへ置き換える。版が変わると SW が入れ替わり、新しい版を保存し直す。
+const ASSET_CACHE = 'naotta-assets-__BUILD_HASH__'
 const NAVIGATE_TIMEOUT_MS = 3000
 
 const assetUrls = (text) =>
   (text.match(/\/?assets\/[\w.-]+\.(?:js|css)/g) ?? []).map((u) => (u.startsWith('/') ? u : `/${u}`))
 
+// skipWaiting はしない。開いたままの古い版が、消された古いキャッシュの JS を取りに行って壊れるのを防ぐ。
+// 新しい版へは、アプリを完全に閉じて開き直したときに切り替わる。
 self.addEventListener('install', (event) => {
-  self.skipWaiting()
   // 電波のない場所でもホーム画面から開けるよう、トップページと全アセットを先に保存する。
   // 初回訪問では SW が load 後に登録されるため、ページが読んだ JS/CSS はキャッシュに入っていない。
   event.waitUntil(caches.open(ASSET_CACHE).then(async (c) => {
