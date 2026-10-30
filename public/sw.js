@@ -1,6 +1,26 @@
 const ASSET_CACHE = 'naotta-assets-v2'
+const NAVIGATE_TIMEOUT_MS = 3000
 
-self.addEventListener('install', () => self.skipWaiting())
+const assetUrls = (text) =>
+  (text.match(/\/?assets\/[\w.-]+\.(?:js|css)/g) ?? []).map((u) => (u.startsWith('/') ? u : `/${u}`))
+
+self.addEventListener('install', (event) => {
+  self.skipWaiting()
+  // 電波のない場所でもホーム画面から開けるよう、トップページと全アセットを先に保存する。
+  // 初回訪問では SW が load 後に登録されるため、ページが読んだ JS/CSS はキャッシュに入っていない。
+  event.waitUntil(caches.open(ASSET_CACHE).then(async (c) => {
+    const page = await fetch('/')
+    if (!page.ok) throw new Error(`/ returned ${page.status}`)
+    const urls = new Set(assetUrls(await page.clone().text()))
+    // 画面ごとに分けた JS は HTML に載らず、JS 内の依存一覧にだけ書かれている。
+    for (const url of [...urls].filter((u) => u.endsWith('.js'))) {
+      const js = await fetch(url)
+      if (js.ok) for (const u of assetUrls(await js.text())) urls.add(u)
+    }
+    await c.addAll([...urls])
+    await c.put('/', page)
+  }))
+})
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
@@ -16,6 +36,27 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event
   const url = new URL(request.url)
+
+  // ページ本体: NetworkFirst。オフラインなら保存済みのページ、なければトップページを返す。
+  if (request.mode === 'navigate') {
+    const network = fetch(request).then((response) => {
+      if (response.ok) {
+        const copy = response.clone()
+        event.waitUntil(caches.open(ASSET_CACHE).then((c) => c.put(request, copy)))
+      }
+      return response
+    })
+    // タイムアウトで先に応答した後も、遅れて届いたページを保存できるようイベントの寿命を延ばす。
+    event.waitUntil(network.catch(() => {}))
+    // 電波が弱いと fetch がなかなか失敗しないため、待ち時間に上限を設ける。
+    const timeout = new Promise((_, reject) => setTimeout(reject, NAVIGATE_TIMEOUT_MS))
+    event.respondWith(
+      Promise.race([network, timeout]).catch(() =>
+        caches.match(request).then((r) => r ?? caches.match('/')).then((r) => r ?? network),
+      ),
+    )
+    return
+  }
 
   // Vite が配信するソースや依存モジュールをキャッシュしない。
   // 同じ URL の旧コードが残ると、更新後の React と混在してしまう。
@@ -37,7 +78,7 @@ self.addEventListener('fetch', (event) => {
         if (cached) return cached
         return fetch(request).then((response) => {
           const copy = response.clone()
-          caches.open(ASSET_CACHE).then((c) => c.put(request, copy))
+          event.waitUntil(caches.open(ASSET_CACHE).then((c) => c.put(request, copy)))
           return response
         })
       }),
