@@ -100,6 +100,7 @@ describe("Service Worker のコードキャッシュ", () => {
     const { install, cache } = harness(fetch);
     await install();
     expect(cache.addAll).toHaveBeenCalledWith([
+      "/qr.svg",
       "/assets/index-a.css",
       "/assets/index-b.js",
       "/assets/history-c.js",

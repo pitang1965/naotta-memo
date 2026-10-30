@@ -13,7 +13,8 @@ self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(ASSET_CACHE).then(async (c) => {
     const page = await fetch('/')
     if (!page.ok) throw new Error(`/ returned ${page.status}`)
-    const urls = new Set(assetUrls(await page.clone().text()))
+    // QR コードはダイアログを開くまで読み込まれないので、名指しで保存する。
+    const urls = new Set(['/qr.svg', ...assetUrls(await page.clone().text())])
     // 画面ごとに分けた JS は HTML に載らず、JS 内の依存一覧にだけ書かれている。
     for (const url of [...urls].filter((u) => u.endsWith('.js'))) {
       const js = await fetch(url)
