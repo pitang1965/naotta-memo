@@ -5,6 +5,7 @@ import {
   loadAppData,
   saveAppData,
   StorageCorruptError,
+  STORAGE_KEY,
   requestPersistentStorage,
 } from "@/lib/storage";
 
@@ -34,6 +35,22 @@ export function useAppData() {
       throw e;
     }
     void requestPersistentStorage();
+  }, []);
+
+  // 別タブ/PWA が保存したら読み直す。古いコピーのまま update すると相手の記録を上書きで消すため。
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== STORAGE_KEY && e.key !== null) return;
+      try {
+        setData(loadAppData() ?? emptyAppData());
+        setError(null);
+      } catch (err) {
+        if (err instanceof StorageCorruptError) setError(err);
+        else throw err;
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   const update = useCallback((fn: (d: AppData) => AppData) => {
