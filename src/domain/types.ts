@@ -22,11 +22,6 @@ export const MAGNITUDE_STATUSES: readonly MagnitudeStatus[] = [
   "same",
   "better",
 ];
-export const LIFECYCLE_STATUSES: readonly LifecycleStatus[] = [
-  "start",
-  "resolved",
-  "relapse",
-];
 
 export function isLifecycle(s: Status): s is LifecycleStatus {
   return s === "start" || s === "resolved" || s === "relapse";

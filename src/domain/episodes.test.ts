@@ -12,7 +12,6 @@ import {
   currentEpisode,
   currentEpisodeDays,
   diseaseSpan,
-  firstOnsetKey,
 } from "./episodes";
 import { daysBetween, inclusiveDayCount, localDateKey } from "./time";
 
@@ -98,7 +97,6 @@ describe("片頭痛の再発シナリオ(モデルA)", () => {
     expect(span.intermittent).toBe(true);
     expect(span.episodeCount).toBe(2);
     expect(span.days).toBe(15); // 8/3〜8/17 通日
-    expect(firstOnsetKey(issue)).toBe("2026-08-03");
   });
 });
 

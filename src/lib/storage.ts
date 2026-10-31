@@ -70,13 +70,6 @@ export function saveAppData(data: AppData): boolean {
   }
 }
 
-/** 保存データが存在するか(破損していても true) */
-export function hasStoredData(): boolean {
-  if (!isBrowser()) return false;
-  const raw = localStorage.getItem(STORAGE_KEY);
-  return raw !== null && raw !== "";
-}
-
 /**
  * ブラウザによる自動削除の可能性を下げる(永続化ストレージを要求)。
  * 対応していなければ false を返すだけで、失敗しても本体には影響しない。

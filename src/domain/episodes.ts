@@ -138,12 +138,6 @@ export function currentEpisodeDays(
   return inclusiveDayCount(localDateKey(ep.startAt), todayKey(now));
 }
 
-/** 原初の発症日(最初の山の始まり)。エントリが無ければ null */
-export function firstOnsetKey(issue: Issue): string | null {
-  const eps = deriveEpisodes(issue);
-  return eps.length ? localDateKey(eps[0].startAt) : null;
-}
-
 /** 罹病スパン(慢性・体質性の表現に使う) */
 export interface DiseaseSpan {
   /** 最初の発症日(ローカル YYYY-MM-DD) */
