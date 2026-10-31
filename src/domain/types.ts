@@ -35,14 +35,6 @@ export function isMagnitude(s: Status): s is MagnitudeStatus {
   return s === "worse" || s === "same" || s === "better";
 }
 
-/** 気圧(取得・保存のみ Phase 1。分析は Phase 2) */
-export interface PressureSample {
-  /** 実測気圧(hPa) */
-  hpa: number;
-  /** 直近24時間の気圧変化(API系列から算出。取れれば) */
-  trend24h?: number | null;
-}
-
 /** 症状のタイムライン上の、時刻つき1エントリ */
 export interface Checkin {
   id: string;
@@ -53,8 +45,6 @@ export interface Checkin {
   status: Status;
   /** どの状態にも付けられる自由記述(空可) */
   note: string;
-  /** ライブ記録時のみ付く。過去日の手入力・訂正では付かない */
-  pressure?: PressureSample | null;
 }
 
 /** 再発しうる継続スレッド。原初の発症日や治癒日は checkins から導出する */

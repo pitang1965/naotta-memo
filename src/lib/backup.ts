@@ -7,14 +7,6 @@
 import { z } from "zod";
 import { APP_DATA_VERSION, type AppData } from "@/domain/types";
 
-const PressureSchema = z
-  .object({
-    hpa: z.number(),
-    trend24h: z.number().nullable().optional(),
-  })
-  .nullable()
-  .optional();
-
 const CheckinSchema = z.object({
   id: z.string(),
   at: z.string(),
@@ -29,7 +21,6 @@ const CheckinSchema = z.object({
     "memo",
   ]),
   note: z.string(),
-  pressure: PressureSchema,
 });
 
 const IssueSchema = z.object({

@@ -27,7 +27,6 @@ const later: Issue = {
       at: "2026-02-02T00:00:00Z",
       status: "memo",
       note: "通院",
-      pressure: { hpa: 1000 },
     },
     { id: "c", at: "2026-02-01T00:00:00Z", status: "start", note: "再び" },
   ],

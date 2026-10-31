@@ -55,14 +55,13 @@ function appendCheckin(issue: Issue, entry: Checkin): Issue {
 export function addCheckin(
   issue: Issue,
   status: Status,
-  opts: { at?: string; note?: string; pressure?: Checkin["pressure"] } = {},
+  opts: { at?: string; note?: string } = {},
 ): Issue {
   return appendCheckin(issue, {
     id: newId(),
     at: opts.at ?? nowIso(),
     status,
     note: opts.note ?? "",
-    ...(opts.pressure !== undefined ? { pressure: opts.pressure } : {}),
   });
 }
 
