@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { IssueHistory } from "@/components/IssueHistory";
 import { MergeIssues } from "@/components/MergeIssues";
+import { SaveErrorAlert } from "@/components/SaveErrorAlert";
 
 const DATE_KEY = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -44,7 +45,7 @@ export const Route = createFileRoute("/history")({
 });
 
 function History() {
-  const { data, error, ready, update } = useAppData();
+  const { data, error, saveFailed, ready, update } = useAppData();
   const search = Route.useSearch();
   const [q, setQ] = useState(search.q ?? "");
   const [from, setFrom] = useState(search.from ?? "");
@@ -77,6 +78,7 @@ function History() {
 
   return (
     <Shell>
+      {saveFailed && <SaveErrorAlert />}
       <div className="flex items-center gap-2">
         <Input
           ref={searchRef}

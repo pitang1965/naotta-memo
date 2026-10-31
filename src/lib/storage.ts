@@ -56,10 +56,18 @@ export function loadAppData(): AppData | null {
   return migrate(parsed as AppData);
 }
 
-/** AppData を端末に保存する。SSR 中は何もしない */
-export function saveAppData(data: AppData): void {
-  if (!isBrowser()) return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+/**
+ * AppData を端末に保存する。SSR 中は何もしない。
+ * 容量超過(QuotaExceededError)などで書けなければ false(画面を落とさず呼び出し側が知らせる)。
+ */
+export function saveAppData(data: AppData): boolean {
+  if (!isBrowser()) return true;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** 保存データが存在するか(破損していても true) */

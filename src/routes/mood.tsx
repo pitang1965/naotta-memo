@@ -3,13 +3,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useAppData } from "@/hooks/useAppData";
 import { clearMood, upsertMood } from "@/domain/operations";
 import { TrendReview } from "@/components/TrendReview";
+import { SaveErrorAlert } from "@/components/SaveErrorAlert";
 
 export const Route = createFileRoute("/mood")({
   component: MoodPage,
 });
 
 function MoodPage() {
-  const { data, error, ready, update } = useAppData();
+  const { data, error, saveFailed, ready, update } = useAppData();
   const now = new Date();
 
   let body: ReactNode;
@@ -39,6 +40,7 @@ function MoodPage() {
           推移
         </h1>
       </header>
+      {saveFailed && <SaveErrorAlert />}
       {body}
     </main>
   );

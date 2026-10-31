@@ -20,7 +20,7 @@ export function BackupSection({
   onReplace,
 }: {
   data: AppData;
-  onReplace: (data: AppData) => void;
+  onReplace: (data: AppData) => boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [pending, setPending] = useState<AppData | null>(null);
@@ -58,7 +58,12 @@ export function BackupSection({
     if (!pending) return;
     // 取り消せるよう、現在のデータを自動で書き出してから置き換える。
     downloadJson(data, backupFilename(new Date(), "before-import"));
-    onReplace(pending);
+    if (!onReplace(pending)) {
+      setError(
+        "保存できませんでした。端末の空き容量を確認してください。既存のデータは変更していません。",
+      );
+      return;
+    }
     setDone(`復元しました(症状 ${pending.issues.length} 件)。`);
     setPending(null);
   };
@@ -92,7 +97,10 @@ export function BackupSection({
         </div>
 
         {error && (
-          <p className="text-destructive border-destructive/40 bg-destructive/5 rounded-md border px-3 py-2 text-sm">
+          <p
+            role="alert"
+            className="text-destructive border-destructive/40 bg-destructive/5 rounded-md border px-3 py-2 text-sm"
+          >
             {error}
           </p>
         )}

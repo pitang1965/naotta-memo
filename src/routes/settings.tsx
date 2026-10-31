@@ -7,13 +7,14 @@ import { ProfileSection } from "@/components/ProfileSection";
 import { CsvImport } from "@/components/CsvImport";
 import { OtherApps } from "@/components/OtherApps";
 import { ShareApp } from "@/components/ShareApp";
+import { SaveErrorAlert } from "@/components/SaveErrorAlert";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
 });
 
 function SettingsPage() {
-  const { data, error, ready, update } = useAppData();
+  const { data, error, saveFailed, ready, update } = useAppData();
 
   let body: ReactNode;
   if (error) {
@@ -46,6 +47,7 @@ function SettingsPage() {
       <header>
         <h1 className="font-serif text-lg font-semibold tracking-wide">設定</h1>
       </header>
+      {saveFailed && <SaveErrorAlert />}
       {body}
       <ShareApp />
       <OtherApps />

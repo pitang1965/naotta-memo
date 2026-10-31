@@ -29,13 +29,14 @@ import { AddSymptom } from "@/components/AddSymptom";
 import { RelapseList } from "@/components/RelapseList";
 import { DismissedList } from "@/components/DismissedList";
 import { VisitExport } from "@/components/VisitExport";
+import { SaveErrorAlert } from "@/components/SaveErrorAlert";
 
 export const Route = createFileRoute("/")({
   component: Home,
 });
 
 function Home() {
-  const { data, error, update, ready } = useAppData();
+  const { data, error, saveFailed, update, ready } = useAppData();
   const now = new Date();
   const today = todayKey(now);
 
@@ -87,6 +88,7 @@ function Home() {
 
   return (
     <Shell>
+      {saveFailed && <SaveErrorAlert />}
       {!recordedToday && (
         <p className="border-primary/30 bg-primary/5 text-foreground rounded-lg border px-3 py-2 text-sm">
           今日の記録はまだです。調子や続いている症状を、ひとつだけでも。

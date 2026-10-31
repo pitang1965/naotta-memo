@@ -44,7 +44,7 @@ export function SymptomCard({
   issue: Issue;
   now: Date;
   onRecord: (status: MagnitudeStatus | "memo", note: string) => void;
-  onResolve: (atISO: string | null) => void;
+  onResolve: (atISO: string | null) => boolean;
   onDismiss: () => void;
   onEditCheckin: (
     checkinId: string,
@@ -180,12 +180,10 @@ export function SymptomCard({
             confirmLabel="治ったことにする"
             now={now}
             onConfirm={(at) => {
-              onResolve(at);
-              celebrate();
+              if (onResolve(at)) celebrate();
             }}
             onConfirmUnknown={() => {
-              onResolve(null);
-              celebrate();
+              if (onResolve(null)) celebrate();
             }}
             trigger={
               <button className="text-primary inline-flex items-center justify-center gap-1.5 text-sm font-medium underline-offset-2 hover:underline">

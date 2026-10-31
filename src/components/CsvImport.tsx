@@ -34,12 +34,17 @@ interface Draft {
   note: string;
 }
 
-export function CsvImport({ onImport }: { onImport: (issues: Issue[]) => void }) {
+export function CsvImport({
+  onImport,
+}: {
+  onImport: (issues: Issue[]) => boolean;
+}) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [text, setText] = useState("");
   const [rows, setRows] = useState<CsvParsedRow[]>([]);
   const [headerError, setHeaderError] = useState<string | null>(null);
   const [done, setDone] = useState<string | null>(null);
+  const [saveFailed, setSaveFailed] = useState(false);
   const [editing, setEditing] = useState<number | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
 
@@ -48,6 +53,7 @@ export function CsvImport({ onImport }: { onImport: (issues: Issue[]) => void })
     setHeaderError(res.headerError ?? null);
     setRows(res.rows);
     setDone(null);
+    setSaveFailed(false);
     setEditing(null);
   };
 
@@ -94,7 +100,9 @@ export function CsvImport({ onImport }: { onImport: (issues: Issue[]) => void })
   const confirm = () => {
     const issues = rowsToIssues(rows);
     if (issues.length === 0) return;
-    onImport(issues);
+    const ok = onImport(issues);
+    setSaveFailed(!ok);
+    if (!ok) return;
     const entries = issues.reduce((n, i) => n + i.checkins.length, 0);
     setDone(`${issues.length} 件の症状(${entries} 件の記録)を取り込みました。`);
     setRows([]);
@@ -302,6 +310,14 @@ export function CsvImport({ onImport }: { onImport: (issues: Issue[]) => void })
           </div>
         )}
 
+        {saveFailed && (
+          <p
+            role="alert"
+            className="text-destructive border-destructive/40 bg-destructive/5 rounded-md border px-3 py-2 text-sm"
+          >
+            保存できませんでした。端末の空き容量を確認してください。まだ取り込まれていません。
+          </p>
+        )}
         {done && <p className="text-primary text-sm">{done}</p>}
       </CardContent>
     </Card>

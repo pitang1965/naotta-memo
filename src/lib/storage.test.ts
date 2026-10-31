@@ -1,5 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { loadAppData, STORAGE_KEY, StorageCorruptError } from "./storage";
+import { emptyAppData } from "@/domain/operations";
+import {
+  loadAppData,
+  saveAppData,
+  STORAGE_KEY,
+  StorageCorruptError,
+} from "./storage";
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -10,5 +16,17 @@ describe("loadAppData", () => {
       getItem: (key: string) => (key === STORAGE_KEY ? "{壊れ" : null),
     });
     expect(() => loadAppData()).toThrow(StorageCorruptError);
+  });
+});
+
+describe("saveAppData", () => {
+  it("容量超過で書けなければ例外を投げずに false を返す(画面を落とさない)", () => {
+    vi.stubGlobal("window", {});
+    vi.stubGlobal("localStorage", {
+      setItem: () => {
+        throw new DOMException("full", "QuotaExceededError");
+      },
+    });
+    expect(saveAppData(emptyAppData())).toBe(false);
   });
 });
