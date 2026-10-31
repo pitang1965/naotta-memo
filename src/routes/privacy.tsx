@@ -8,7 +8,7 @@ export const Route = createFileRoute("/privacy")({
   component: PrivacyPage,
 });
 
-const UPDATED = "2026年8月20日";
+const UPDATED = "2026年10月31日";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -118,7 +118,7 @@ function PrivacyPage() {
             </li>
           </ul>
           <p className="mt-2">
-            現時点では、外部サービスへ健康データを送信する機能はありません。将来、気圧の自動記録など外部の気象データを取得する機能を追加する場合は、位置情報の許可をその都度お願いし、事前に本ポリシーを更新します。
+            現時点では、外部サービスへ健康データを送信する機能はありません。将来、外部サービスと通信する機能を追加する場合は、事前に本ポリシーを更新します。
           </p>
         </Section>
 
