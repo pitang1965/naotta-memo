@@ -61,6 +61,18 @@ describe("Service Worker のコードキャッシュ", () => {
     expect(await respondWith.mock.calls[0][0]).toBe(cached);
   });
 
+  it("キャッシュにないアセットは取得に成功したときだけ保存する", async () => {
+    for (const ok of [false, true]) {
+      const response = { ok, clone: () => ({}) };
+      const { request, match, cache } = harness(vi.fn().mockResolvedValue(response));
+      match.mockResolvedValue(undefined);
+      expect(await request("/assets/x.js").mock.calls[0][0]).toBe(response);
+      // 保存はキャッシュを開いた後に非同期で走るので、終わるのを待つ。
+      await new Promise((resolve) => setTimeout(resolve));
+      expect(cache.put).toHaveBeenCalledTimes(ok ? 1 : 0);
+    }
+  });
+
   it("ページを開くときにネットワークが失敗したらキャッシュを返す", async () => {
     const { request, match, cached } = harness();
     const respondWith = request("/history", "document", "navigate");

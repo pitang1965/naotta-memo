@@ -80,8 +80,11 @@ self.addEventListener('fetch', (event) => {
       caches.match(request).then((cached) => {
         if (cached) return cached
         return fetch(request).then((response) => {
-          const copy = response.clone()
-          event.waitUntil(caches.open(ASSET_CACHE).then((c) => c.put(request, copy)))
+          // 一時的な 404/503 を保存すると、次の版まで同じエラーを返し続ける。
+          if (response.ok) {
+            const copy = response.clone()
+            event.waitUntil(caches.open(ASSET_CACHE).then((c) => c.put(request, copy)))
+          }
           return response
         })
       }),
