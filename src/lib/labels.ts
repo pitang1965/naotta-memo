@@ -10,19 +10,18 @@ export const STATUS_LABEL: Record<Status, string> = {
   memo: "メモ",
 };
 
-export const MOOD_OPTIONS: { value: Mood; symbol: string; text: string }[] = [
-  { value: "great", symbol: "◎", text: "絶好調" },
-  { value: "ok", symbol: "○", text: "普通" },
-  { value: "meh", symbol: "△", text: "だるい" },
-  { value: "bad", symbol: "✕", text: "つらい" },
-];
-
-export const MOOD_LABEL: Record<Mood, string> = {
-  great: "絶好調",
-  ok: "普通",
-  meh: "だるい",
-  bad: "つらい",
+// Record<Mood, …> にしておくと、気分の書き忘れがコンパイルエラーになる。並び順は書いた順
+export const MOOD_DISPLAY: Record<Mood, { symbol: string; text: string }> = {
+  great: { symbol: "◎", text: "絶好調" },
+  ok: { symbol: "○", text: "普通" },
+  meh: { symbol: "△", text: "だるい" },
+  bad: { symbol: "✕", text: "つらい" },
 };
+
+export const MOOD_OPTIONS = (Object.keys(MOOD_DISPLAY) as Mood[]).map((value) => ({
+  value,
+  ...MOOD_DISPLAY[value],
+}));
 
 /** ローカル日付キー(YYYY-MM-DD)を「M月D日」表記に */
 export function jpDate(key: string): string {

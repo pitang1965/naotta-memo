@@ -3,7 +3,7 @@ import { Trash2, X } from "lucide-react";
 import type { AppData, Mood } from "@/domain/types";
 import { recentDayKeys } from "@/domain/time";
 import { trendRows } from "@/domain/trend";
-import { MOOD_LABEL, MOOD_OPTIONS, jpDate } from "@/lib/labels";
+import { MOOD_DISPLAY, MOOD_OPTIONS, jpDate } from "@/lib/labels";
 import { MOOD_COLOR } from "@/lib/mood";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -104,7 +104,7 @@ export function TrendReview({
                 <button
                   key={key}
                   onClick={() => editMood(key)}
-                  title={`${jpDate(key)} ${m ? MOOD_LABEL[m] : "未記録"}`}
+                  title={`${jpDate(key)} ${m ? MOOD_DISPLAY[m].text : "未記録"}`}
                   aria-label={`${jpDate(key)} の調子を記録`}
                   className={cn(
                     "h-9 flex-1 rounded-sm",
