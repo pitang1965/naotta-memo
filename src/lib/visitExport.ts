@@ -9,8 +9,8 @@ import {
   currentEpisodeDays,
   deriveEpisodes,
   deriveStatus,
+  byLatestDesc,
   diseaseSpan,
-  latestCheckinAt,
 } from "@/domain/episodes";
 import { localDateKey } from "@/domain/time";
 import { STATUS_LABEL, jpDate, jpDateFull } from "@/lib/labels";
@@ -22,10 +22,6 @@ const RECENT_RESOLVED = 5;
 function md(key: string): string {
   const [, m, d] = key.split("-");
   return `${Number(m)}/${Number(d)}`;
-}
-
-function byLatestDesc(a: Issue, b: Issue): number {
-  return latestCheckinAt(a) < latestCheckinAt(b) ? 1 : -1;
 }
 
 /** 生年月日から、ある日付時点の満年齢。生年月日未設定や不整合なら null */

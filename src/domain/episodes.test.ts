@@ -12,6 +12,7 @@ import {
   currentEpisode,
   currentEpisodeDays,
   diseaseSpan,
+  byLatestDesc,
 } from "./episodes";
 import { daysBetween, inclusiveDayCount, localDateKey } from "./time";
 
@@ -149,5 +150,14 @@ describe("中立のメモ(memo)", () => {
     const eps = deriveEpisodes(issue);
     expect(eps).toHaveLength(1);
     expect(eps[0].checkins.map((c) => c.status)).toEqual(["start", "memo"]);
+  });
+});
+
+describe("byLatestDesc", () => {
+  it("同時刻なら渡した順に関係なく id 順", () => {
+    const a = { ...createIssue("頭痛", at("2026-08-14")), id: "a" };
+    const b = { ...createIssue("咳", at("2026-08-14")), id: "b" };
+    expect([b, a].sort(byLatestDesc)).toEqual([a, b]);
+    expect([a, b].sort(byLatestDesc)).toEqual([a, b]);
   });
 });

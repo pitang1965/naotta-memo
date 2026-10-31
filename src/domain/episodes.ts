@@ -107,6 +107,13 @@ export function latestCheckinAt(issue: Issue): string {
   return s.length ? s[s.length - 1].at : "";
 }
 
+/** 最後の記録が新しい順。同時刻は id 順にして、画面ごとに並びが揺れないようにする */
+export function byLatestDesc(a: Issue, b: Issue): number {
+  const la = latestCheckinAt(a);
+  const lb = latestCheckinAt(b);
+  return la < lb ? 1 : la > lb ? -1 : a.id.localeCompare(b.id);
+}
+
 /** 現在の状態: 最新のライフサイクル・イベントで決まる(resolved なら resolved、他は active) */
 export function deriveStatus(issue: Issue): "active" | "resolved" {
   const sorted = sortedCheckins(issue);

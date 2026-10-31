@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import type { Issue, MagnitudeStatus } from "@/domain/types";
-import { deriveStatus, latestCheckinAt } from "@/domain/episodes";
+import { byLatestDesc, deriveStatus } from "@/domain/episodes";
 import { localDateKey, todayKey } from "@/domain/time";
 import {
   addCheckin,
@@ -71,7 +71,7 @@ function Home() {
   const active = tracked.filter((i) => deriveStatus(i) === "active");
   const resolved = tracked
     .filter((i) => deriveStatus(i) === "resolved")
-    .sort((a, b) => (latestCheckinAt(a) < latestCheckinAt(b) ? 1 : -1));
+    .sort(byLatestDesc);
 
   const mood = data.daily.find((d) => d.date === today)?.mood;
   const recordedToday =

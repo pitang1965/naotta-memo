@@ -7,7 +7,7 @@
 
 import type { Checkin, Issue, MagnitudeStatus } from "./types";
 import { isMagnitude } from "./types";
-import { deriveEpisodes, latestCheckinAt, sortedCheckins } from "./episodes";
+import { byLatestDesc, deriveEpisodes, sortedCheckins } from "./episodes";
 import { localDateKey } from "./time";
 
 export interface TrendDay {
@@ -93,9 +93,5 @@ export function trendRows(issues: Issue[], dayKeys: string[]): TrendRow[] {
     .filter((issue) => !issue.dismissedAt)
     .map((issue) => ({ issue, days: trendDays(issue, dayKeys) }))
     .filter((row) => row.days.some((d) => d.ongoing || d.checkins.length > 0))
-    .sort((a, b) => {
-      const la = latestCheckinAt(a.issue);
-      const lb = latestCheckinAt(b.issue);
-      return la < lb ? 1 : la > lb ? -1 : a.issue.id.localeCompare(b.issue.id);
-    });
+    .sort((a, b) => byLatestDesc(a.issue, b.issue));
 }
